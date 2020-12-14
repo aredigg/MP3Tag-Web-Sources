@@ -1,0 +1,3 @@
+[IndexUrl]=https://itunes.apple.com/search?media=music&entity=album&limit=200&country=no&lang=nb_no
+[SearchBy]=Search for||[$if2(%ALBUMARTIST%,%ARTIST%)][ %ALBUM%]||&term=%s
+[Include]=Apple Music.inc

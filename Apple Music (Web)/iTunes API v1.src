@@ -1,0 +1,204 @@
+# iTunes API parser for MP3Tag v3
+[Name]=iTunes Music
+[BasedOn]=https://itunes.apple.com/
+[IndexUrl]=https://itunes.apple.com/search?media=music&entity=album&limit=200
+[AlbumUrl]=https://itunes.apple.com/lookup?entity=song&limit=200
+[WordSeparator]=+
+[IndexFormat]=%_url%|%Artist%|%Album%|%_preview%|%Version%|%Tracks%|%Copyright%|%Store%|%Year%|%Genre%
+[SearchBy]=Search for||[$if2(%ALBUMARTIST%,%ARTIST%)][ %ALBUM%]||&term=%s
+[Encoding]=url-utf-8
+
+# Index albums
+[ParserScriptIndex]=...
+
+# Turn on JSON parsing
+json "on"
+
+# Number of items
+json_select "resultCount"
+IfNot "0"
+	# Parse all items
+	json_foreach "results"
+	# Check for album
+	json_select "collectionType"
+	If "Album"
+		# Album URL
+		json_select "collectionId"
+		Say "&id="
+		SayNextNumber
+		Say "|"
+		# Artist
+		json_select "artistName"
+		SayRest
+		Say "|"
+		# Album
+		json_select "collectionName"
+		If ""
+			json_select "collectionCensoredName"
+		EndIf
+		SayRest
+		Say "|"
+		# Preview URL
+		json_select "collectionViewUrl"
+		Replace "?uo=4" ""
+		SayRest
+		Say "|"
+		# Version
+		json_select "collectionExplicitness"
+		Replace "notExplicit" ""
+		Replace "explicit" "Explicit"
+		Replace "cleaned" "Cleaned"
+		SayRest
+		Say "|"
+		# Track count
+		json_select "trackCount"
+		SayNextNumber
+		Say "|"
+		# Copyright
+		json_select "copyright"
+		SayRest
+		Say "|"
+		# Store
+		json_select "country"
+		SayRest
+		Say "|"
+		# Store
+		json_select "releaseDate"
+		SayNextNumber
+		Say "|"
+		# Genre
+		json_select "primaryGenreName"
+		SayRest
+		SayNewline
+	EndIf
+	json_foreach_end
+EndIf
+
+# Get album
+[ParserScriptAlbum]=...
+
+# Turn on JSON parsing
+json "on"
+
+# Number of items
+json_select "resultCount"
+IfNot "0"
+	# Parse all items
+	json_foreach "results"
+	json_select "collectionType"
+	# Parse album data
+	If "Album"
+		OutputTo "atID"
+		json_select "artistId"
+		SayNextNumber
+		Say "|"
+		OutputTo "plID"
+		json_select "collectionId"
+		SayNextNumber
+		Say "|"
+		OutputTo "AMGARTISTID"
+		json_select "amgArtistId"
+		SayNextNumber
+		OutputTo "ALBUMARTIST"
+		json_select "artistName"
+		SayRest
+		OutputTo "ALBUM"
+		json_select "collectionName"
+		If ""
+			json_select "collectionCensoredName"
+		EndIf
+		SayRest
+		OutputTo "COVERURL"
+		json_select "artworkUrl100"
+		replace "100x100bb" "10000x10000bb"
+		SayRest
+#		OutputTo "ITUNESADVISORY"
+#		json_select "collectionExplicitness"
+#		Replace "cleaned" "2"
+#		Replace "explicit" "1"
+#		Replace "notExplicit" "0"
+#		SayRest
+#		Say "|"
+		OutputTo "TOTALTRACKS"
+		json_select "trackCount"
+		SayNextNumber
+		Say "|"
+		OutputTo "COPYRIGHT"
+		json_select "copyright"
+		SayRest
+		OutputTo "YEAR"
+		json_select "releaseDate"
+		SayRest	
+		Say "|"
+		OutputTo "GENRE"
+		json_select "primaryGenreName"
+		SayRest
+		Say "|"
+	EndIf
+	json_select "kind"
+	If "song"
+	# Parse each song data
+		OutputTo "atID"
+		json_select "artistId"
+		SayNextNumber
+		Say "|"
+#		OutputTo "plID"
+#		json_select "collectionId"
+#		SayNextNumber
+#		Say "|"
+		OutputTo "ITUNESCATALOGID"
+		json_select "trackId"
+		SayNextNumber
+		Say "|"
+		OutputTo "ARTIST"
+		json_select "artistName"
+		SayRest
+		Say "|"
+		OutputTo "COLLECTIONNAME"
+		json_select "collectionCensoredName"
+		SayRest
+		Say "|"
+		OutputTo "TRACKS"
+		json_select "trackName"
+		If ""
+			json_select "trackCensoredName"
+		EndIf
+		SayRest
+		Say "|"
+		OutputTo "ITUNESADVISORY"
+		json_select "trackExplicitness"
+		Replace "cleaned" "2"
+		Replace "explicit" "1"
+		Replace "notExplicit" "0"
+		SayRest
+		Say "|"
+		OutputTo "ITUNESMEDIATYPE"
+		Say "Normal"
+		Say "|"
+#		OutputTo "YEAR"
+#		json_select "releaseDate"
+#		SayRest		
+#		Say "|"
+		OutputTo "TOTALDISCS"
+		json_select "discCount"
+		SayNextNumber
+		Say "|"
+		OutputTo "DISCNUMBER"
+		json_select "discNumber"
+		SayNextNumber
+		Say "|"
+		OutputTo "TOTALTRACKS"
+		json_select "trackCount"
+		SayNextNumber
+		Say "|"
+		OutputTo "_LENGTH"
+		json_select "trackTimeMillis"
+		SayNextNumber
+		Say "|"
+		OutputTo "GENRE"
+		json_select "primaryGenreName"
+		SayRest
+		Say "|"
+	EndIf
+	json_foreach_end
+EndIf
