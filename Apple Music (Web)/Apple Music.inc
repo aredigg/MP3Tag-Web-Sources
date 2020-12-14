@@ -104,8 +104,8 @@ Replace ".2cartists.locale.5bresource" ""
 Replace ".5d.autos.views.appears-on.2cmore-by-artist.2crelated-videos" ""
 Replace ".2cother-versions.2cyou-might-also-like.2cvideo-extras.2caudio-extras" ""
 
-debug "on" "C:\debug-album.txt"
-DebugWriteInput "C:\debug-album-in.txt"
+# debug "on" "C:\debug-album.txt"
+# DebugWriteInput "C:\debug-album-in.txt"
 
 RegexpReplace "storefronts\.(.*?)\"" "storefronts\""
 
@@ -169,7 +169,7 @@ If "albums"
 		SayRest
 		json_select_object "playParams"
 			json_select "id"
-			OutputTo "TplID"
+			OutputTo "plID"
 			SayNextNumber
 		json_unselect_object
 		json_select_object "editorialNotes"
@@ -305,7 +305,7 @@ If "albums"
 					json_select_object "relationships"
 						json_select_object "composers"
 							json_select_many "data" "id" ", "
-							OutputTo "TcmID"
+							OutputTo "cmID"
 							IfNot ""
 								SayRest
 							EndIf
@@ -313,7 +313,7 @@ If "albums"
 						json_unselect_object
 						json_select_object "artists"
 							json_select_many "data" "id" ", "
-							OutputTo "TatID"
+							OutputTo "atID"
 							IfNot ""
 								SayRest
 							EndIf
