@@ -11,8 +11,8 @@
 # Index albums
 [ParserScriptIndex]=...
 
-debug "on" "C:\debug-index.txt"
-DebugWriteInput "C:\debug-index-in.txt"
+# debug "on" "C:\debug-index.txt"
+# DebugWriteInput "C:\debug-index-in.txt"
 
 # Turn on JSON parsing
 json "on"
@@ -80,8 +80,8 @@ EndIf
 # Get album
 [ParserScriptAlbum]=...
 
-debug "on" "C:\debug-album.txt"
-DebugWriteInput "C:\debug-album-in.txt"
+# debug "on" "C:\debug-album.txt"
+# DebugWriteInput "C:\debug-album-in.txt"
 
 # Turn on JSON parsing and clean data
 FindLine "<script type=\"fastboot/shoebox\" id=\"shoebox-media-api-cache-amp-music\">"
@@ -103,6 +103,9 @@ Replace ".2cartists.locale.5bresource" ""
 # Replace ".2cartists.2crecord-labels.l.en-us.omit.5bresource" ""
 Replace ".5d.autos.views.appears-on.2cmore-by-artist.2crelated-videos" ""
 Replace ".2cother-versions.2cyou-might-also-like.2cvideo-extras.2caudio-extras" ""
+
+debug "on" "C:\debug-album.txt"
+DebugWriteInput "C:\debug-album-in.txt"
 
 RegexpReplace "storefronts\.(.*?)\"" "storefronts\""
 
@@ -140,12 +143,15 @@ If "albums"
 		json_select "artistName"
 		OutputTo "ALBUMARTIST"
 		SayRest
+		json_select "isSingle"
+		OutputTo "SINGLE"
+		SayRest
 #		json_select_array "genreNames" 1
 #		OutputTo "GENRE"
 #		SayRest
-#		json_select_array "genreNames" -1 ", "
-#		OutputTo "AMGENRES"
-#		SayRest
+		json_select_array "genreNames" -1 ", "
+		OutputTo "AMGENRES"
+		SayRest
 		json_select "trackCount"
 		OutputTo "TOTALTRACKS"
 		SayNextNumber
@@ -242,6 +248,36 @@ If "albums"
 						OutputTo "LANGUAGE"
 						SayRest
 						Say "|"
+						json_select "workName"
+						IfNot ""
+							OutputTo "SHOWMOVEMENT"
+							Say "1"
+							Say "|"
+							OutputTo "WORK"
+							SayRest
+							Say "|"
+							OutputTo "MOVEMENTNAME"
+							json_select "name"
+							FindInLine ": "
+							SayRest
+							Say "|"
+#							OutputTo "MOVEMENT"
+#							json_select "name"
+#							FindInLine ":"
+#							SayNextNumber
+#							Say "|"
+						Else
+							OutputTo "SHOWMOVEMENT"
+							Say "0"
+							Say "|"
+							OutputTo "WORK"
+							Say "|"
+							OutputTo "MOVEMENTNAME"
+							Say "|"
+#							OutputTo "MOVEMENT"
+#							Say "|"
+						EndIf
+						SayRest
 						json_select "composerName"
 						OutputTo "COMPOSER"
 						SayRest
@@ -250,6 +286,10 @@ If "albums"
 #						OutputTo "POPULARITY"
 #						SayRest
 #						Say "|"
+						json_select "attribution"
+						OutputTo "ATTRIBUTION"
+						SayRest
+						Say "|"
 						json_select "contentRating"
 						OutputTo "ITUNESADVISORY"
 						IfNot ""
@@ -267,7 +307,7 @@ If "albums"
 							json_select_many "data" "id" ", "
 							OutputTo "TcmID"
 							IfNot ""
-								SayNextNumber
+								SayRest
 							EndIf
 							Say "|"
 						json_unselect_object
@@ -275,7 +315,7 @@ If "albums"
 							json_select_many "data" "id" ", "
 							OutputTo "TatID"
 							IfNot ""
-								SayNextNumber
+								SayRest
 							EndIf
 							Say "|"
 						json_unselect_object
