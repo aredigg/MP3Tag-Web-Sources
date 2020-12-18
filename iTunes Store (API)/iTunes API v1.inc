@@ -1,7 +1,6 @@
 # iTunes API parser for MP3Tag v3
 [Name]=iTunes
 [BasedOn]=https://itunes.apple.com/
-[AlbumUrl]=https://itunes.apple.com/lookup?entity=song&limit=200
 [WordSeparator]=+
 [IndexFormat]=%_url%|%Artist%|%Album%|%_preview%|%Version%|%Tracks%|%Copyright%|%Store%|%Year%|%Genre%
 [Encoding]=url-utf-8
@@ -99,18 +98,49 @@ IfNot "0"
 
 		OutputTo "ALBUMARTIST"
 		json_select "artistName"
-		SayRest
+		Replace "Various Artists" ""
+		Replace "Varios Artistas" ""
+		Replace "Vários Artistas" ""
+		Replace "群星" ""
+		Replace "Eri Esittäjiä" ""
+		Replace "Multi-interprètes" ""
+		Replace "Verschiedene Interpreten" ""
+		Replace "Artisti Vari" ""
+		Replace "ヴァリアス・アーティスト" ""
+		Replace "Diverse Artister" ""
+		Replace "Разные артисты" ""
+		Replace "Blandade Artister" ""
+		Replace "Çeşitli Sanatçılar" ""
+		Replace "مختلف الفنانين" ""
+		Replace "فنانون متنوعون" ""
+		Replace "فنانون متعددون" ""
+		Replace "Різні виконавці" ""
+		Replace "Nhiều Nghệ Sĩ" ""
+		If ""
+			OutputTo "COMPILATION"
+			Say "1"
+			OutputTo "ALBUMARTIST"
+			Say ""
+		Else
+			SayRest
+		EndIf
 
 		OutputTo "ALBUM"
 		json_select "collectionName"
 		If ""
 			json_select "collectionCensoredName"
 		EndIf
-		SayRest
+		Replace "[" "("
+		Replace "]" ")"
+		SayUntil "(Remastered)"
+		IfNot ""
+			OutputTo "REMASTEREDALBUM"
+			Say "1"
+		EndIf
 
 		OutputTo "COVERURL"
 		json_select "artworkUrl100"
-		replace "100x100bb" "10000x10000bb"
+		Replace "100x100bb" "10000x10000bb"
 		SayRest
 
 		OutputTo "ALBUMADVISORY"
@@ -174,7 +204,14 @@ IfNot "0"
 		If ""
 			json_select "trackName"
 		EndIf
-		SayRest
+		Replace "[" "("
+		Replace "]" ")"
+		SayUntil "(Remastered)"
+		Say "|"
+		OutputTo "REMASTERED"
+		IfNot ""
+			Say "1"
+		EndIf
 		Say "|"
 
 		OutputTo "ITUNESADVISORY"
@@ -206,6 +243,11 @@ IfNot "0"
 
 		OutputTo "TOTALTRACKS"
 		json_select "trackCount"
+		SayNextNumber
+		Say "|"
+
+		OutputTo "TRACK"
+		json_select "trackNumber"
 		SayNextNumber
 		Say "|"
 

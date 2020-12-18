@@ -1,3 +1,4 @@
-[IndexUrl]=https://itunes.apple.com/search?media=music&entity=album&limit=200&country=it&lang=it_it
-[SearchBy]=Cerca per||[$if2(%plID%,[$if2(%ALBUMARTIST%,%ARTIST%)][ %ALBUM%])]||&term=%s
+[AlbumUrl]=https://itunes.apple.com/lookup?entity=song&limit=200&country=it&lang=it
+[IndexUrl]=https://itunes.apple.com/search?media=music&entity=album&limit=200&country=it&lang=it
+[SearchBy]=Cerca per||[$if2(%plID%,[$if2([$if2(%ALBUMARTIST%,%ARTIST%)][ %ALBUM%],[%_directory%] [%_parent_directory%])])]||&term=%s
 [Include]=iTunes API v1.inc

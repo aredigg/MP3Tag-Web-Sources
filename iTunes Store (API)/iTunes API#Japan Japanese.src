@@ -1,3 +1,4 @@
+[AlbumUrl]=https://itunes.apple.com/lookup?entity=song&limit=200&country=jp&lang=ja_jp
 [IndexUrl]=https://itunes.apple.com/search?media=music&entity=album&limit=200&country=jp&lang=ja_jp
-[SearchBy]=検索する||[$if2(%plID%,[$if2(%ALBUMARTIST%,%ARTIST%)][ %ALBUM%])]||&term=%s
+[SearchBy]=検索する||[$if2(%plID%,[$if2([$if2(%ALBUMARTIST%,%ARTIST%)][ %ALBUM%],[%_directory%] [%_parent_directory%])])]||&term=%s
 [Include]=iTunes API v1.inc
