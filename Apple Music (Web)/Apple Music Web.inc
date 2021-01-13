@@ -83,7 +83,10 @@ Replace "]}}}]}\"}" "]}}}]}}"
 RegexpReplace "\.catalog\.(.*?)\.albums\.(.*?)\.art" "mp3tagalbum"
 Replace ".5burl.5d.f.extend.5balbums.5d.editorialartwork.extend.offers" ""
 Replace ".2cpopularity.2ceditorialvideo.fields.5balbums.3aalbums.5d.artistname" ""
-Replace ".2cartisturl.2cartwork.2ceditorialartwork.2cname.2cplayparams.2creleasedate" ""
+Replace ".2cartisturl.2cartwork" ""
+Replace ".2ccontentrating.2ceditorialartwork" ""
+Replace ".2ceditorialnotes" ""
+Replace ".2cname.2cplayparams.2creleasedate" ""
 Replace ".2curl.fields.5bartists.5d.name.2curl.fields.5brecord-labels" ""
 Replace ".5d.name.2curl.include.5bsongs.5d.artists.2ccomposers.include.tracks" ""
 RegexpReplace "2crecord-labels\.l\.(.*?)\.omit" "locale"
@@ -95,11 +98,17 @@ RegexpReplace "storefronts\.(.*?)\"" "storefronts\""
 
 json "on" "current"
 
+debug "on" "C:\debug-album.txt"
+DebugWriteInput "C:\debug-album-in.txt"
+
 json_unselect_object
 json_select "mp3tagalbum"
 json_select_array "d" 1
 json_select "type"
 If "albums"
+	json_select "id"
+	OutputTo "plID"
+	SayRest
 	json_select_object "attributes"
 
 		json_select_object "artwork"
@@ -146,10 +155,12 @@ If "albums"
 		SayRest
 
 		json_select_object "playParams"
-			json_select "id"
-			OutputTo "plID"
-			SayNextNumber
-		json_unselect_object
+			IfNot ""
+				json_select "id"
+				OutputTo "plID2"
+				SayNextNumber
+				json_unselect_object
+			EndIf
 
 		json_select_object "editorialNotes"
 			IfNot ""
@@ -255,7 +266,7 @@ If "albums"
 							Say "|"
 							OutputTo "MOVEMENTNAME"
 							json_select "name"
-							FindInLine ": "
+							FindInLine ": " 1 1
 							SayRest
 							Say "|"
 						Else
