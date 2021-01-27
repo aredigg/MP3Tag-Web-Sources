@@ -3,12 +3,15 @@
 [BasedOn]=https://itunes.apple.com/
 [AlbumUrl]=
 [WordSeparator]=+
-[IndexFormat]=%_url%|%Artist%|%Album%|%_preview%|%Version%|%Tracks%|%Copyright%|%Store%|%Year%|%Genre%
+[IndexFormat]=%_url%|%Artist%|%Album%|%_preview%|%Version%|%Tracks%|%Collection ID%|%Copyright%|%Store%|%Year%|%Genre%
 [Encoding]=url-utf-8
 
 [ParserScriptIndex]=...
 
 json "on"
+
+# debug "on" "C:\debug-index.txt"
+# DebugWriteInput "C:\debug-index-in.txt"
 
 json_select "resultCount"
 IfNot "0"
@@ -47,6 +50,67 @@ IfNot "0"
 		Say "|"
 
 		json_select "trackCount"
+		SayNextNumber
+		Say "|"
+
+		json_select "collectionId"
+		SayNextNumber
+		Say "|"
+
+		json_select "copyright"
+		SayRest
+		Say "|"
+
+		json_select "country"
+		SayRest
+		Say "|"
+
+		json_select "releaseDate"
+		SayNextNumber
+		Say "|"
+
+		json_select "primaryGenreName"
+		SayRest
+		SayNewline
+
+	EndIf
+	If "Compilation"
+
+		json_select "collectionViewUrl"
+		Replace "?uo=4" ""
+		Replace "&uo=4" ""
+		SayRest
+		Say "|"
+
+		json_select "artistName"
+		SayRest
+		Say "|"
+
+		json_select "collectionName"
+		If ""
+			json_select "collectionCensoredName"
+		EndIf
+		SayRest
+		Say "|"
+
+		json_select "collectionViewUrl"
+		Replace "?uo=4" ""
+		Replace "&uo=4" ""
+		SayRest
+		Say "|"
+
+		json_select "collectionExplicitness"
+		Replace "notExplicit" "C"
+		Replace "explicit" "C Explicit"
+		Replace "cleaned" "C Cleaned"
+		SayRest
+		Say "|"
+
+		json_select "trackCount"
+		SayNextNumber
+		Say "|"
+
+		json_select "collectionId"
 		SayNextNumber
 		Say "|"
 
@@ -98,8 +162,8 @@ RegexpReplace "storefronts\.(.*?)\"" "storefronts\""
 
 json "on" "current"
 
-debug "on" "C:\debug-album.txt"
-DebugWriteInput "C:\debug-album-in.txt"
+# debug "on" "C:\debug-album.txt"
+# DebugWriteInput "C:\debug-album-in.txt"
 
 json_unselect_object
 json_select "mp3tagalbum"
