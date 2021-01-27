@@ -68,6 +68,58 @@ IfNot "0"
 		SayNewline
 
 	EndIf
+	If "Compilation"
+
+		json_select "collectionId"
+		Say "&id="
+		SayNextNumber
+		Say "|"
+
+		json_select "artistName"
+		SayRest
+		Say "|"
+
+		json_select "collectionName"
+		If ""
+			json_select "collectionCensoredName"
+		EndIf
+		SayRest
+		Say "|"
+
+		json_select "collectionViewUrl"
+		Replace "?uo=4" ""
+		Replace "&uo=4" ""
+		SayRest
+		Say "|"
+
+		json_select "collectionExplicitness"
+		Replace "notExplicit" "C"
+		Replace "explicit" "C Explicit"
+		Replace "cleaned" "C Cleaned"
+		SayRest
+		Say "|"
+
+		json_select "trackCount"
+		SayNextNumber
+		Say "|"
+
+		json_select "copyright"
+		SayRest
+		Say "|"
+
+		json_select "country"
+		SayRest
+		Say "|"
+
+		json_select "releaseDate"
+		SayNextNumber
+		Say "|"
+
+		json_select "primaryGenreName"
+		SayRest
+		SayNewline
+
+	EndIf
 	json_foreach_end
 EndIf
 
