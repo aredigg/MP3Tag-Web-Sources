@@ -7,9 +7,6 @@
 
 [ParserScriptIndex]=...
 
-# debug "on" "C:\debug-index.txt"
-# DebugWriteInput "C:\debug-index-in.txt"
-
 json "on"
 
 json_select "resultCount"
@@ -125,9 +122,6 @@ EndIf
 
 [ParserScriptAlbum]=...
 
-# debug "on" "C:\debug-album.txt"
-# DebugWriteInput "C:\debug-album-in.txt"
-
 json "on"
 
 json_select "resultCount"
@@ -140,7 +134,7 @@ IfNot "0"
 		json_select "artistId"
 		SayNextNumber
 
-		OutputTo "plID"
+		OutputTo "ITUNESALBUMID"
 		json_select "collectionId"
 		SayNextNumber
 
@@ -228,7 +222,7 @@ IfNot "0"
 	json_select "kind"
 	If "song"
 
-		OutputTo "atID"
+		OutputTo "ITUNESARTISTID"
 		json_select "artistId"
 		SayNextNumber
 		Say "|"
