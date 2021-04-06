@@ -3,15 +3,12 @@
 [BasedOn]=https://itunes.apple.com/
 [AlbumUrl]=
 [WordSeparator]=+
-[IndexFormat]=%_url%|%Artist%|%Album%|%_preview%|%Version%|%Tracks%|%Collection ID%|%Copyright%|%Store%|%Year%|%Genre%
+[IndexFormat]=%_url%|%Artist%|%Album%|%_preview%|%Version%|%Tracks%|%Collection ID%|%Copyright%|%Store%|%Currency%|%Price%|%Year%|%Genre%
 [Encoding]=url-utf-8
 
 [ParserScriptIndex]=...
 
 json "on"
-
-# debug "on" "C:\debug-index.txt"
-# DebugWriteInput "C:\debug-index-in.txt"
 
 json_select "resultCount"
 IfNot "0"
@@ -62,6 +59,14 @@ IfNot "0"
 		Say "|"
 
 		json_select "country"
+		SayRest
+		Say "|"
+
+		json_select "currency"
+		SayRest
+		Say "|"
+
+		json_select "collectionPrice"
 		SayRest
 		Say "|"
 
@@ -122,6 +127,14 @@ IfNot "0"
 		SayRest
 		Say "|"
 
+		json_select "currency"
+		SayRest
+		Say "|"
+
+		json_select "collectionPrice"
+		SayRest
+		Say "|"
+
 		json_select "releaseDate"
 		SayNextNumber
 		Say "|"
@@ -162,16 +175,14 @@ RegexpReplace "storefronts\.(.*?)\"" "storefronts\""
 
 json "on" "current"
 
-# debug "on" "C:\debug-album.txt"
-# DebugWriteInput "C:\debug-album-in.txt"
-
 json_unselect_object
+
 json_select "mp3tagalbum"
 json_select_array "d" 1
 json_select "type"
 If "albums"
 	json_select "id"
-	OutputTo "plID"
+	OutputTo "ITUNESALBUMID"
 	SayRest
 	json_select_object "attributes"
 
@@ -188,10 +199,6 @@ If "albums"
 
 		json_select "artistName"
 		OutputTo "ALBUMARTIST"
-		SayRest
-
-		json_select "isSingle"
-		OutputTo "SINGLE"
 		SayRest
 
 		json_select_array "genreNames" -1 ", "
@@ -217,14 +224,6 @@ If "albums"
 		json_select "copyright"
 		OutputTo "COPYRIGHT"
 		SayRest
-
-		json_select_object "playParams"
-			IfNot ""
-				json_select "id"
-				OutputTo "plID2"
-				SayNextNumber
-				json_unselect_object
-			EndIf
 
 		json_select_object "editorialNotes"
 			IfNot ""
@@ -305,11 +304,6 @@ If "albums"
 						SayRest
 						Say "|"
 
-						json_select "hasLyrics"
-						OutputTo "AMLYRICS"
-						SayRest
-						Say "|"
-
 						json_select "trackNumber"
 						OutputTo "TRACK"
 						SayNextNumber
@@ -370,7 +364,7 @@ If "albums"
 
 						json_select_object "composers"
 							json_select_many "data" "id" ", "
-							OutputTo "cmID"
+							OutputTo "ITUNESCOMPOSERID"
 							IfNot ""
 								SayRest
 							EndIf
@@ -379,7 +373,7 @@ If "albums"
 
 						json_select_object "artists"
 							json_select_many "data" "id" ", "
-							OutputTo "atID"
+							OutputTo "ITUNESARTISTID"
 							IfNot ""
 								SayRest
 							EndIf
