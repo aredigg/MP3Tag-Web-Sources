@@ -10,6 +10,9 @@
 
 json "on"
 
+# debug "on" "C:\debug-index.txt"
+# DebugWriteInput "C:\debug-index-in.txt"
+
 json_select "resultCount"
 IfNot "0"
 	json_foreach "results"
@@ -170,10 +173,14 @@ RegexpReplace "2crecord-labels\.l\.(.*?)\.omit" "locale"
 Replace ".2cartists.locale.5bresource" ""
 Replace ".5d.autos.views.appears-on.2cmore-by-artist.2crelated-videos" ""
 Replace ".2cother-versions.2cyou-might-also-like.2cvideo-extras.2caudio-extras" ""
+Replace ".5d.autos.platform.web.views.appears-on.2cmore-by-artist.2crelated-videos" ""
 
 RegexpReplace "storefronts\.(.*?)\"" "storefronts\""
 
 json "on" "current"
+
+# debug "on" "C:\debug-album.txt"
+# DebugWriteInput "C:\debug-album-in.txt"
 
 json_unselect_object
 
