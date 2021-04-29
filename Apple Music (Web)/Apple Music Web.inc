@@ -168,7 +168,9 @@ Replace ".2ccontentrating.2ceditorialartwork" ""
 Replace ".2ceditorialnotes" ""
 Replace ".2cname.2cplayparams.2creleasedate" ""
 Replace ".2curl.fields.5bartists.5d.name.2curl.fields.5brecord-labels" ""
-Replace ".5d.name.2curl.include.5bsongs.5d.artists.2ccomposers.include.tracks" ""
+Replace ".5d.name.2curl.include" ""
+Replace ".5bmusic-videos.5d.artists.2ccomposers.include" ""
+Replace ".5bsongs.5d.artists.2ccomposers.include.tracks" ""
 RegexpReplace "2crecord-labels\.l\.(.*?)\.omit" "locale"
 Replace ".2cartists.locale.5bresource" ""
 Replace ".5d.autos.views.appears-on.2cmore-by-artist.2crelated-videos" ""
@@ -281,6 +283,12 @@ If "albums"
 						SayNextNumber
 						Say "|"
 
+						json_select "discNumber"
+						Set "TOTALDISCS"
+						OutputTo "TOTALDISCS"
+						SayNextNumber
+						Say "|"
+
 						json_select_array "genreNames" 1
 						OutputTo "GENRE"
 						SayRest
@@ -377,6 +385,16 @@ If "albums"
 							EndIf
 							Say "|"
 						json_unselect_object
+
+#						json_select_object "artists"
+#							json_select_array "data" 1
+#								json_select "id"
+#								OutputTo "ITUNESARTISTID"
+#								IfNot ""
+#									SayRest
+#								EndIf
+#								Say "|"
+#						json_unselect_object
 
 						json_select_object "artists"
 							json_select_many "data" "id" ", "
