@@ -184,6 +184,36 @@ json "on" "current"
 # debug "on" "C:\debug-album.txt"
 # DebugWriteInput "C:\debug-album-in.txt"
 
+json_select_object ".storefronts"
+	json_select_array "d" 1
+		json_select "id"
+		IfNot ""
+			Replace "br" "143503"
+			Replace "cn" "143465"
+			Replace "dk" "143458"
+			Replace "fi" "143447"
+			Replace "fr" "143442"
+			Replace "de" "143443"
+			Replace "in" "143467"
+			Replace "it" "143450"
+			Replace "jp" "143462"
+			Replace "kr" "143466"
+			Replace "no" "143457"
+			Replace "pl" "143478"
+			Replace "pt" "143453"
+			Replace "ru" "143469"
+			Replace "es" "143454"
+			Replace "se" "143456"
+			Replace "tr" "143480"
+			Replace "ae" "143481"
+			Replace "gb" "143444"
+			Replace "ua" "143492"
+			Replace "us" "143441"
+			Replace "vn" "143471"
+		EndIf
+		OutputTo "ITUNESCOUNTRYID"
+		SayRest
+	json_unselect_object
 json_unselect_object
 
 json_select "mp3tagalbum"
@@ -228,6 +258,10 @@ If "albums"
 
 		json_select "recordLabel"
 		OutputTo "LABEL"
+		SayRest
+
+		json_select "upc"
+		OutputTo "UPC"
 		SayRest
 
 		json_select "copyright"
