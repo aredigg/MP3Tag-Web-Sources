@@ -1,4 +1,5 @@
-# iTunes API/Apple Music parser for MP3Tag v3
+# iTunes API/Apple Music parser v 2.0 for MP3Tag v3
+# © 2021 All Rights Reserved
 [Name]=Apple Music
 [BasedOn]=https://itunes.apple.com/
 [AlbumUrl]=
@@ -241,7 +242,7 @@ If "albums"
 		SayRest
 
 		json_select_array "genreNames" -1 ", "
-		OutputTo "AMGENRES"
+		OutputTo "ALBUMGENRES"
 		SayRest
 
 		json_select "trackCount"
@@ -371,11 +372,30 @@ If "albums"
 							OutputTo "WORK"
 							SayRest
 							Say "|"
-							OutputTo "MOVEMENTNAME"
-							json_select "name"
-							FindInLine ": " 1 1
-							SayRest
-							Say "|"
+							json_select "movementName"
+							IfNot ""
+								OutputTo "MOVEMENTNAME"
+								SayRest
+								Say "|"						
+								json_select "movementNumber"
+								OutputTo "MOVEMENT"
+								SayNextNumber
+								Say "|"
+								json_select "movementCount"
+								OutputTo "MOVEMENTTOTAL"
+								SayNextNumber
+								Say "|"
+							Else
+								OutputTo "MOVEMENTNAME"
+								json_select "name"
+								FindInLine ": " 1 1
+								SayRest
+								Say "|"
+								OutputTo "MOVEMENT"
+								Say "|"
+								OutputTo "MOVEMENTTOTAL"
+								Say "|"
+							EndIf
 						Else
 							OutputTo "SHOWMOVEMENT"
 							Say "0"
@@ -383,6 +403,10 @@ If "albums"
 							OutputTo "WORK"
 							Say "|"
 							OutputTo "MOVEMENTNAME"
+							Say "|"
+							OutputTo "MOVEMENT"
+							Say "|"
+							OutputTo "MOVEMENTTOTAL"
 							Say "|"
 						EndIf
 
@@ -412,37 +436,225 @@ If "albums"
 					json_select_object "relationships"
 
 						json_select_object "composers"
-							json_select_many "data" "id" ", "
+							json_foreach "data"
+								IfNot "0"
+									json_foreach_end
+									json_select_object "relationships"	# This must clearly be a bug in mp3tag
+									json_select_object "composers"
+									json_select_array "data" 1
+										json_select "id"
+										OutputTo "ITUNESCOMPOSERID"
+										SayRest
+										json_select_object "attributes"
+											json_select "name"
+											OutputTo "ITUNESCOMPOSERIDNAME"
+											SayRest
+										json_unselect_object
+									json_unselect_object
+									json_select_many "data" "id" ", "
+										OutputTo "COMPOSERIDS"
+										SayRest
+								Else
+									json_foreach_end
+								EndIf
 							OutputTo "ITUNESCOMPOSERID"
-							IfNot ""
-								SayRest
-							EndIf
+							Say "|"
+							OutputTo "ITUNESCOMPOSERIDNAME"
+							Say "|"
+							OutputTo "COMPOSERIDS"
 							Say "|"
 						json_unselect_object
 
-#						json_select_object "artists"
-#							json_select_array "data" 1
-#								json_select "id"
-#								OutputTo "ITUNESARTISTID"
-#								IfNot ""
-#									SayRest
-#								EndIf
-#								Say "|"
-#						json_unselect_object
-
 						json_select_object "artists"
-							json_select_many "data" "id" ", "
+							json_foreach "data"
+								IfNot "0"
+									json_foreach_end
+									json_select_object "relationships"	# This must clearly be a bug in mp3tag
+									json_select_object "artists"
+									json_select_array "data" 1
+										json_select "id"
+										OutputTo "ITUNESARTISTID"
+										SayRest
+										json_select_object "attributes"
+											json_select "name"
+											OutputTo "ITUNESARTISTIDNAME"
+											SayRest
+										json_unselect_object
+									json_unselect_object
+									json_select_many "data" "id" ", "
+										OutputTo "ARTISTIDS"
+										SayRest
+								Else
+									json_foreach_end
+								EndIf
 							OutputTo "ITUNESARTISTID"
-							IfNot ""
-								SayRest
-							EndIf
+							Say "|"
+							OutputTo "ITUNESARTISTIDNAME"
+							Say "|"
+							OutputTo "ARTISTIDS"
 							Say "|"
 						json_unselect_object
 
 					json_unselect_object
+
+					OutputTo "WWW"
+					Say "|"
+
+					OutputTo "VIDEO4K"
+					Say "|"
+
+					OutputTo "VIDEOHDR"
+					Say "|"
+
+					OutputTo "ITUNESMEDIATYPE"
+					Say "Normal|"
+
+				EndIf
+
+				If "music-videos"
+
+					json_select "id"
+					OutputTo "ITUNESCATALOGID"
+					SayNextNumber
+					Say "|"
+
+					json_select_object "attributes"
+
+						json_select "artistName"
+						OutputTo "ARTIST"
+						SayRest
+						Say "|"
+
+						json_select_array "genreNames" 1
+						OutputTo "GENRE"
+						SayRest
+						Say "|"
+
+						json_select_array "genreNames" -1 ", "
+						OutputTo "GENRES"
+						SayRest
+						Say "|"
+
+						json_select "durationInMillis"
+						OutputTo "_LENGTH"
+						SayNextNumber
+						Say "|"
+
+						json_select "releaseDate"
+						OutputTo "TRACKYEAR"
+						SayRest
+						Say "|"
+
+						json_select "name"
+						OutputTo "TRACKS"
+						SayRest
+						Say "|"
+
+						json_select "isrc"
+						OutputTo "ISRC"
+						SayRest
+						Say "|"
+
+						json_select "trackNumber"
+						OutputTo "TRACK"
+						SayNextNumber
+						Say "|"
+
+						json_select "has4K"
+						OutputTo "VIDEO4K"
+						SayRest
+						Say "|"
+
+						json_select "hasHDR"
+						OutputTo "VIDEOHDR"
+						SayRest
+						Say "|"
+
+						json_select "url"
+						OutputTo "WWW"
+						SayRest
+						Say "|"
+
+						OutputTo "ITUNESMEDIATYPE"
+						Say "Music Video|"
+
+					json_unselect_object
+
+					json_select_object "relationships"
+
+						json_select_object "artists"
+							json_foreach "data"
+								IfNot "0"
+									json_foreach_end
+									json_select_object "relationships"	# This must clearly be a bug in mp3tag
+									json_select_object "artists"
+									json_select_array "data" 1
+										json_select "id"
+										OutputTo "ITUNESARTISTID"
+										SayRest
+										json_select_object "attributes"
+											json_select "name"
+											OutputTo "ITUNESARTISTIDNAME"
+											SayRest
+										json_unselect_object
+									json_unselect_object
+									json_select_many "data" "id" ", "
+										OutputTo "ARTISTIDS"
+										SayRest
+								Else
+									json_foreach_end
+								EndIf
+							OutputTo "ITUNESARTISTID"
+							Say "|"
+							OutputTo "ITUNESARTISTIDNAME"
+							Say "|"
+							OutputTo "ARTISTIDS"
+							Say "|"
+						json_unselect_object
+
+					json_unselect_object
+
+					OutputTo "ATTRIBUTION"
+					Say "|"
+
+					OutputTo "COMPOSER"
+					Say "|"
+
+					OutputTo "COMPOSERIDS"
+					Say "|"
+
+					OutputTo "DISCNUMBER"
+					Say "|"
+
+					OutputTo "ITUNESADVISORY"
+					Say "|"
+
+					OutputTo "ITUNESCOMPOSERID"
+					Say "|"
+
+					OutputTo "ITUNESCOMPOSERIDNAME"
+					Say "|"
+
+					OutputTo "LANGUAGE"
+					Say "|"
+
+					OutputTo "MOVEMENT"
+					Say "|"
+
+					OutputTo "MOVEMENTNAME"
+					Say "|"
+
+					OutputTo "MOVEMENTTOTAL"
+					Say "|"
+
+					OutputTo "SHOWMOVEMENT"
+					Say "|"
+
+					OutputTo "WORK"
+					Say "|"
+
 				EndIf
 			json_foreach_end
 		json_unselect_object
 	json_unselect_object
 EndIf
-
