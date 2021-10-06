@@ -163,7 +163,8 @@ Replace "}}]}\"" "}}]}"
 Replace "]}}}]}\"}" "]}}}]}}"
 RegexpReplace "\.catalog\.(.*?)\.albums\.(.*?)\.art" "mp3tagalbum"
 Replace ".5burl.5d.f.extend.5balbums.5d.editorialartwork.extend.offers" ""
-Replace ".2cpopularity.2ceditorialvideo.fields.5balbums.3aalbums.5d.artistname" ""
+Replace ".2cpopularity" ""
+Replace ".2ceditorialvideo.fields.5balbums.3aalbums.5d.artistname" ""
 Replace ".2cartisturl.2cartwork" ""
 Replace ".2ccontentrating.2ceditorialartwork" ""
 Replace ".2ceditorialnotes" ""
@@ -237,9 +238,46 @@ If "albums"
 			EndIf
 		json_unselect_object
 
+		json_select "isCompilation"
+		OutputTo "COMPILATION"
+		SayRest
+
 		json_select "artistName"
 		OutputTo "ALBUMARTIST"
-		SayRest
+		Replace "Various Artists" ""
+		Replace "Varios Artistas" ""
+		Replace "Vários Artistas" ""
+		Replace "Vários intérpretes" ""
+		Replace "群星" ""
+		Replace "群星" ""
+		Replace "Eri Esittäjiä" ""
+		Replace "Multi-interprètes" ""
+		Replace "Verschiedene Interpreten" ""
+		Replace "Verschillende artiesten" ""
+		Replace "Artisti Vari" ""
+		Replace "ヴァリアス・アーティスト" ""
+		Replace "Diverse Artister" ""
+		Replace "Разные артисты" ""
+		Replace "Разные исполнители" ""
+		Replace "Διάφοροι καλλιτέχνες" ""
+		Replace "Blandade Artister" ""
+		Replace "אמנים שונים" ""
+		Replace "Çeşitli Sanatçılar" ""
+		Replace "مختلف الفنانين" ""
+		Replace "فنانون متنوعون" ""
+		Replace "فنانون متعددون" ""
+		Replace "Різні виконавці" ""
+		Replace "รวมศิลปิน" ""
+		Replace "Nhiều Nghệ Sĩ" ""
+		If ""
+			Set "COMPILATION"
+			OutputTo "COMPILATION"
+			Say "1"
+			OutputTo "ALBUMARTIST"
+			Say ""
+		Else
+			SayRest
+		EndIf
 
 		json_select_array "genreNames" -1 ", "
 		OutputTo "ALBUMGENRES"
@@ -279,10 +317,6 @@ If "albums"
 			SayRest
 			json_unselect_object
 			EndIf
-
-		json_select "isCompilation"
-		OutputTo "COMPILATION"
-		SayRest
 
 		json_select "contentRating"
 		IfNot ""
