@@ -1,5 +1,5 @@
-# iTunes API/Apple Music parser v 2.0 for MP3Tag v3
-# © 2021 All Rights Reserved
+# iTunes API/Apple Music parser v 2.2 for MP3Tag v3
+# © 2021-2022 All Rights Reserved
 [Name]=Apple Music
 [BasedOn]=https://itunes.apple.com/
 [AlbumUrl]=
@@ -161,10 +161,22 @@ Replace "\\\"" "\""
 Replace "\":\"{" "\":{"
 Replace "}}]}\"" "}}]}"
 Replace "]}}}]}\"}" "]}}}]}}"
-RegexpReplace "\.catalog\.(.*?)\.albums\.(.*?)\.art" "mp3tagalbum"
+Replace ".5d.artistname" ""
+Replace ".5d.artists" ""
+RegexpReplace "\.catalog\.(.*?)\.albums\.art" "mp3tagalbum"
+RegexpReplace "\.5bequivalents\.5d\.(.*?)\.include" ""
+Replace ".5d.name" ""
+Replace ".2curl.fields" ""
+Replace ".5bartists" ""
+Replace ".2curl.filter" ""
+Replace ".5bmusic-videos" ""
+Replace ".2ccomposers.include" ""
+Replace ".5bsongs" ""
+Replace ".2ccomposers.include.tracks" ""
+Replace ".5brecord-labels.tracks" ""
 Replace ".5burl.5d.f.extend.5balbums.5d.editorialartwork.extend.offers" ""
 Replace ".2cpopularity" ""
-Replace ".2ceditorialvideo.fields.5balbums.3aalbums.5d.artistname" ""
+Replace ".2ceditorialvideo.fields.5balbums.3aalbums" ""
 Replace ".2cartisturl.2cartwork" ""
 Replace ".2ccontentrating.2ceditorialartwork" ""
 Replace ".2ceditorialnotes" ""
@@ -279,6 +291,10 @@ If "albums"
 			SayRest
 		EndIf
 
+		json_select "url"
+		OutputTo "URL"
+		SayRest
+
 		json_select_array "genreNames" -1 ", "
 		OutputTo "ALBUMGENRES"
 		SayRest
@@ -301,6 +317,10 @@ If "albums"
 
 		json_select "upc"
 		OutputTo "UPC"
+		SayRest
+
+		json_select_array "audioTraits" -1 ", "
+		OutputTo "AUDIOTRAITS"
 		SayRest
 
 		json_select "copyright"
