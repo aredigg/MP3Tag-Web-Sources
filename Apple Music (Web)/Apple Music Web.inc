@@ -1,4 +1,4 @@
-# iTunes API/Apple Music parser v 3.0𝛼 for MP3Tag v3
+# iTunes API/Apple Music parser v 3.0β for MP3Tag v3
 # © 2021-2022 All Rights Reserved
 [Name]=Apple Music
 [BasedOn]=https://music.apple.com/
@@ -202,7 +202,7 @@ IfNot ""
 					Replace "us" "143441"
 					Replace "vn" "143471"
 					OutputTo "ITUNESCOUNTRYID"
-					SayRest
+					SayNextNumber
 				EndIf
 				json_select "language"
 				IfNot ""
@@ -229,39 +229,23 @@ IfNot ""
 				IfNot ""
 					json_select_object "dictionary"
 					IfNot ""
+						# LQ Cover
 						json_select "url"
 						IfNot ""
-							Replace "{w}" "7200"
-							Replace "{h}" "7200"
-							Replace "{f}" "jpg"
+							RegexpReplace "(.*)\/.*" "$1"
 							OutputTo "COVERURL"
 							SayRest
+							Say "/2400x2400-50.jpg"
 						EndIf
-						json_select "textColor1"
-						IfNot ""
-							OutputTo "TEXTCOLOR"
-							SayRest
-						EndIf
-						json_select "textColor2"
-						IfNot ""
-							OutputTo "TEXTCOLOR2"
-							SayRest
-						EndIf
-						json_select "textColor3"
-						IfNot ""
-							OutputTo "TEXTCOLOR3"
-							SayRest
-						EndIf
-						json_select "textColor4"
-						IfNot ""
-							OutputTo "TEXTCOLOR4"
-							SayRest
-						EndIf
-						json_select "bgColor"
-						IfNot ""
-							OutputTo "BGCOLOR"
-							SayRest
-						EndIf
+						# HQ Cover
+#						json_select "url"
+#						IfNot ""
+#							Replace "://is" "://a"
+#							Replace "-ssl.mzstatic.com/image/thumb/" ".mzstatic.com/us/r1000/0/"
+#							RegexpReplace "(.*)\/.*" "$1"
+#							OutputTo "COVERURL"
+#							SayRest
+#						EndIf
 						json_unselect_object
 					EndIf
 					json_unselect_object
@@ -269,13 +253,27 @@ IfNot ""
 				
 				OutputTo "ALBUM"
 				json_select "title"
+				Replace " - Single" ""
+				RegexpReplace "\(.*\)" ""
+				RegexpReplace "\[.*\]" ""
 				SayRest
+				
+				OutputTo "SUBALBUM"
+				json_select "title"
+				SayRegexp "(?<=\[)[^)]*(?=\])"
+				IfOutput "SUBALBUM"
+					Say "\\\\"
+				EndIf
+				SayRegexp "(?<=\()[^)]*(?=\))"
 				
 				json_foreach "subtitleLinks"
 					json_select "title"
-					OutputTo "SUBALBUM"
+					OutputTo "SUBALBUMARTIST"
+					IfOutput "AM_TEMP_1"
+						Say "\\\\"
+					EndIf
 					SayRest
-					Say "/"
+					Set "AM_TEMP_1" "X"
 					json_select_object "segue"
 					IfNot ""
 						json_select_object "destination"
@@ -288,8 +286,11 @@ IfNot ""
 									IfNot ""
 										json_select "storeAdamID"
 										OutputTo "ITUNESARTISTID"
-										SayRest
-										Say "/"
+										IfOutput "AM_TEMP_2"
+											Say "\\\\"
+										EndIf
+										SayNextNumber
+										Set "AM_TEMP_2" "X"
 										json_unselect_object
 									EndIf
 								EndIf
@@ -304,6 +305,8 @@ IfNot ""
 						Say "1"
 					EndIf
 				json_foreach_end
+				Set "AM_TEMP_1"
+				Set "AM_TEMP_2"
 					
 				json_select_object "modalPresentationDescriptor"
 				IfNot ""
@@ -341,6 +344,46 @@ IfNot ""
 					SayRegexp "©.*"
 				EndIf
 				
+				json_select_object "linkSection"
+				IfNot ""
+					json_select "title"
+					If "RECORD LABEL"
+						OutputTo "PUBLISHER"				
+					Else
+						OutputTo "LINKSECTION"
+					EndIf
+					json_select_object "link"
+					IfNot ""
+						json_select "title"
+						SayRest
+						json_select_object "segue"
+						IfNot ""
+							json_select_object "destination"
+							IfNot ""
+								json_select_object "intent"
+								IfNot ""
+									json_select_object "contentDescriptor"
+									IfNot ""
+										json_select_object "identifiers"
+										IfNot ""
+											json_select "storeAdamID"
+											OutputTo "ITUNESPUBLISHERID"
+											SayNextNumber
+											json_unselect_object
+										EndIf
+										json_unselect_object
+									EndIf
+									json_unselect_object
+								EndIf
+								json_unselect_object
+							EndIF
+							json_unselect_object
+						EndIf
+						json_unselect_object
+					EndIf
+					json_unselect_object
+				EndIf
+				
 			json_foreach_end
 		EndIf
 
@@ -349,9 +392,20 @@ IfNot ""
 				
 				OutputTo "TRACKS"
 				json_select "title"
+				RegexpReplace "\(.*\)" ""
+				RegexpReplace "\[.*\]" ""
 				SayRest
 				Say "|"
 				
+				OutputTo "SUBTRACK"
+				json_select "title"
+				SayRegexp "(?<=\[)[^)]*(?=\])"
+				IfOutput "SUBTRACK"
+					Say "\\\\"
+				EndIf
+				SayRegexp "(?<=\()[^)]*(?=\))"
+				Say "|"
+
 				OutputTo "TRACK"
 				json_select "trackNumber"
 				SayNextNumber
@@ -376,7 +430,7 @@ IfNot ""
 					IfNot ""
 						OutputTo "ITUNESCATALOGID"
 						json_select "storeAdamID"
-						SayRest
+						SayNextNumber
 						json_unselect_object
 					EndIf
 					json_unselect_object
@@ -389,8 +443,11 @@ IfNot ""
 				json_foreach "subtitleLinks"
 					json_select "title"
 					OutputTo "SUBARTIST"
+					IfOutput "AM_TEMP_1"
+						Say "\\\\"
+					EndIf
 					SayRest
-					Say "/"
+					Set "AM_TEMP_1" "X"
 					json_select_object "segue"
 					IfNot ""
 						json_select_object "destination"
@@ -403,8 +460,11 @@ IfNot ""
 									IfNot ""
 										json_select "storeAdamID"
 										OutputTo "ITUNESARTISTID"
-										SayRest
-										Say "/"
+										IfOutput "AM_TEMP_2"
+											Say "\\\\"
+										EndIf
+										SayNextNumber
+										Set "AM_TEMP_2" "X"
 										json_unselect_object
 									EndIf
 								EndIf
@@ -419,6 +479,9 @@ IfNot ""
 				Say "|"
 				OutputTo "ITUNESARTISTID"
 				Say "|"
+				Set "AM_TEMP_1"
+				Set "AM_TEMP_2"
+
 				
 				OutputTo "COMPOSER"
 				json_select "composer"
@@ -483,13 +546,12 @@ IfNot ""
 		OutputTo "YEAR"
 		json_select "musicReleaseDate"
 		SayRest
-
-		OutputTo "QUALITY"
-		json_select "quality"
-		SayRest
 		
 		OutputTo "COMMENT"
 		json_select "socialDescription"
+		SayRest
+		SayNewline
+		json_select "socialTitle"
 		SayRest
 
 		json_foreach "ogSongs"
@@ -505,20 +567,35 @@ IfNot ""
 				SayRest
 				Say "|"
 	
+				# LQ Cover	
 				OutputTo "TRACKCOVERURL"
 				json_select_object "artwork"
 				IfNot ""
 					json_select "url"
 					IfNot ""
-						Replace "{w}" "7200"
-						Replace "{h}" "7200"
-						Replace "{f}" "jpg"
+						RegexpReplace "(.*)\/.*" "$1"
 						SayRest
+						Say "/2400x2400-50.jpg"
 					EndIf
 					json_unselect_object
 				EndIf
 				Say "|"
-	
+
+				# HQ Cover	
+#				OutputTo "TRACKCOVERURL"
+#				json_select_object "artwork"
+#				IfNot ""
+#					json_select "url"
+#					IfNot ""
+#						Replace "://is" "://a"
+#						Replace "-ssl.mzstatic.com/image/thumb/" ".mzstatic.com/us/r1000/0/"
+#						RegexpReplace "(.*)\/.*" "$1"
+#						SayRest
+#					EndIf
+#					json_unselect_object
+#				EndIf
+#				Say "|"
+
 				OutputTo "LANGUAGE"
 				json_select "audioLocale"
 				SayRest
