@@ -1,3 +1,0 @@
-[IndexUrl]=https://itunes.apple.com/search?media=music&entity=album&limit=200&country=vn&lang=vi_vn
-[SearchBy]=Tìm kiếm||[$if2(%ITUNESALBUMID%,[$if2([$if2(%ALBUMARTIST%,%ARTIST%)][ %ALBUM%],[%_directory%] [%_parent_directory%])])]||&term=%s
-[Include]=Apple Music Web.inc

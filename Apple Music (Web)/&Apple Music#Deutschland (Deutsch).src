@@ -1,0 +1,3 @@
+[IndexUrl]=https://music.apple.com/de/search?l=de&term=%s
+[SearchBy]=Suche nach||[$if2([$if2(%ALBUMARTIST%,%ARTIST%)][ %ALBUM%],[%_directory%] [%_parent_directory%])]||%s
+[Include]=Apple Music Web.inc
