@@ -1,10 +1,10 @@
-# Apple Music parser v3.1 for MP3Tag
+# Apple Music parser v3.2 for MP3Tag
 # © 2021-2022 All Rights Reserved
 [Name]=Apple Music
 [BasedOn]=https://music.apple.com
 [WordSeparator]=%20
 [Encoding]=url-utf-8
-[IndexFormat]=%_url%|%_preview%|%Type%|%ID%|%Title%|%Artist%|%Tracks%|%Explicit%
+[IndexFormat]=%_url%|%_preview%|%_coverurl%|%Title%|%Artist%|%Tracks%|%Kind%|%Explicit%
 
 [ParserScriptIndex]=...
 
@@ -36,18 +36,7 @@ json_select_object "data"
 						json_select "url"
 						SayRest
 						Say "|"
-						
-						# %Type%
-						Say "Album"
-						Say "|"
-						
-						# %ID%
-						json_select_object "identifiers"
-							json_select "storeAdamID"
-							SayNextNumber
-						json_unselect_object
-						Say "|"
-						
+					
 					EndIf
 					If "song"
 						Set "FoundSong" "True"
@@ -60,17 +49,6 @@ json_select_object "data"
 						# %_preview%
 						json_select "url"
 						SayRest
-						Say "|"
-						
-						# %Type%
-						Say "Song (Album)"
-						Say "|"
-						
-						# %ID%
-						json_select_object "identifiers"
-							json_select "storeAdamID"
-							SayNextNumber
-						json_unselect_object
 						Say "|"
 						
 					EndIf
@@ -87,22 +65,24 @@ json_select_object "data"
 						SayRest
 						Say "|"
 						
-						# %Type%
-						Say "Music Video"
-						Say "|"
-						
-						# %ID%
-						json_select_object "identifiers"
-							json_select "storeAdamID"
-							SayNextNumber
-						json_unselect_object
-						Say "|"
-						
 					EndIf
 				json_unselect_object
 				
 				# Secondary
 				IfOutput "FoundAlbum"
+				
+					# %_coverurl%
+					json_select_object "artwork"
+					IfNot ""
+							json_select_object "dictionary"
+								json_select "url"
+								RegexpReplace "(.*)\/.*" "$1"
+								SayRest
+								Say "/120x120-50.jpg"
+							json_unselect_object
+						json_unselect_object
+					EndIf
+					Say "|"
 				
 					# %Title%
 					json_select_many "titleLinks" "title" " / "
@@ -119,6 +99,10 @@ json_select_object "data"
 					SayNextNumber
 					Say "|"
 					
+					# %Kind%
+					Say "Album"
+					Say "|"
+					
 					# %Explicit%
 					json_select "showExplicitBadge"
 					If "1"
@@ -131,6 +115,19 @@ json_select_object "data"
 				EndIf
 				IfOutput "FoundSong"
 				
+					# %_coverurl%
+					json_select_object "artwork"
+					IfNot ""
+							json_select_object "dictionary"
+								json_select "url"
+								RegexpReplace "(.*)\/.*" "$1"
+								SayRest
+								Say "/120x120-50.jpg"
+							json_unselect_object
+						json_unselect_object
+					EndIf
+					Say "|"
+
 					# %Title%
 					json_select "title"
 					SayRest
@@ -145,6 +142,10 @@ json_select_object "data"
 					json_select "trackCount"
 					Say "|"
 					
+					# %Kind%
+					Say "Song (Album)"
+					Say "|"
+
 					# %Explicit%
 					json_select "showExplicitBadge"
 					If "1"
@@ -157,6 +158,19 @@ json_select_object "data"
 				EndIf
 				IfOutput "FoundMusicVideo"
 				
+					# %_coverurl%
+					json_select_object "artwork"
+					IfNot ""
+							json_select_object "dictionary"
+								json_select "url"
+								RegexpReplace "(.*)\/.*" "$1"
+								SayRest
+								Say "/120x120-50.jpg"
+							json_unselect_object
+						json_unselect_object
+					EndIf
+					Say "|"
+
 					# %Title%
 					json_select_many "titleLinks" "title" " / "
 					SayRest
@@ -171,6 +185,10 @@ json_select_object "data"
 					json_select "trackCount"
 					Say "|"
 					
+					# %Kind%
+					Say "Music Video"
+					Say "|"
+
 					# %Explicit%
 					json_select "showExplicitBadge"
 					If "1"
@@ -427,6 +445,14 @@ json_select_object "data"
 					RegexpReplace "\[.*\]" ""
 					SayRest
 					
+					OutputTo "CONTENTGROUP"
+					json_select "title"
+					SayRegexp "(?<=\()[^)]*(?=\))"
+					IfOutput "CONTENTGROUP"
+						SayNewline
+					EndIf
+					SayRegexp "(?<=\[)[^)]*(?=\])"
+					
 					OutputTo "ALBUMSORT"
 					json_select "title"
 					SayRest
@@ -503,6 +529,15 @@ json_select_object "data"
 					SayRest
 					Say "|"
 					
+					OutputTo "COMMENT"
+					json_select "title"
+					SayRegexp "(?<=\()[^)]*(?=\))"
+					IfOutput "COMMENT"
+						SayNewline
+					EndIf
+					SayRegexp "(?<=\[)[^)]*(?=\])"
+					Say "|"
+					
 					OutputTo "TITLESORT"
 					json_select "title"
 					SayRest
@@ -522,7 +557,6 @@ json_select_object "data"
 					OutputTo "TOTALDISCS"
 					json_select "discNumber"
 					SayNextNumber
-
 				
 				EndIf
 
