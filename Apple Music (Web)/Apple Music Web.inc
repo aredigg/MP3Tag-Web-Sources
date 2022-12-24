@@ -1,4 +1,4 @@
-# Apple Music parser v3.2 for MP3Tag
+# Apple Music parser v3.3 for MP3Tag
 # © 2021-2022 All Rights Reserved
 [Name]=Apple Music
 [BasedOn]=https://music.apple.com
@@ -443,6 +443,9 @@ json_select_object "data"
 					Replace " - EP" ""
 					RegexpReplace "\(.*\)" ""
 					RegexpReplace "\[.*\]" ""
+					If ""
+						json_select "title"
+					EndIf
 					SayRest
 					
 					OutputTo "CONTENTGROUP"
@@ -526,16 +529,25 @@ json_select_object "data"
 					json_select "title"
 					RegexpReplace "\(.*\)" ""
 					RegexpReplace "\[.*\]" ""
-					SayRest
+					If ""
+						Set "Skip_Comment" "True"
+						json_select "title"		
+						SayRegexp "(?<=\()[^)]*(?=\))"
+					Else
+						SayRest
+					EndIf
 					Say "|"
 					
 					OutputTo "COMMENT"
-					json_select "title"
-					SayRegexp "(?<=\()[^)]*(?=\))"
-					IfOutput "COMMENT"
-						SayNewline
+					IfNotOutput "Skip_Comment"
+						json_select "title"
+						SayRegexp "(?<=\()[^)]*(?=\))"
+						IfOutput "COMMENT"
+							SayNewline
+						EndIf
+						SayRegexp "(?<=\[)[^)]*(?=\])"
+						Set "Skip_Comment"
 					EndIf
-					SayRegexp "(?<=\[)[^)]*(?=\])"
 					Say "|"
 					
 					OutputTo "TITLESORT"
