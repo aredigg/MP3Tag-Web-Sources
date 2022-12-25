@@ -1,4 +1,4 @@
-# Apple Music parser v3.3 for MP3Tag
+# Apple Music parser v3.4 for MP3Tag
 # © 2021-2022 All Rights Reserved
 [Name]=Apple Music
 [BasedOn]=https://music.apple.com
@@ -15,200 +15,251 @@ json "on" "current"
 
 # debug "on" "debug-index.txt"
 
-json_select_object "data"
-	json_foreach "sections"
-		json_select "itemKind"
-		IfNot "topSearchLockup"
-			json_foreach "items"
-				json_select_object "contentDescriptor"
-					json_select "kind"
-					
-					# Primary
-					If "album"
-						Set "FoundAlbum" "True"
-						
-						# %_url%
-						json_select "url"
-						SayRest
-						Say "|"
-						
-						# %_preview%
-						json_select "url"
-						SayRest
-						Say "|"
-					
-					EndIf
-					If "song"
-						Set "FoundSong" "True"
-						
-						# %_url%
-						json_select "url"
-						SayRest
-						Say "|"
-						
-						# %_preview%
-						json_select "url"
-						SayRest
-						Say "|"
-						
-					EndIf
-					If "musicVideo"
-						Set "FoundMusicVideo" "True"
-						
-						# %_url%
-						json_select "url"
-						SayRest
-						Say "|"
-						
-						# %_preview%
-						json_select "url"
-						SayRest
-						Say "|"
-						
-					EndIf
-				json_unselect_object
-				
-				# Secondary
-				IfOutput "FoundAlbum"
-				
-					# %_coverurl%
-					json_select_object "artwork"
-					IfNot ""
-							json_select_object "dictionary"
-								json_select "url"
-								RegexpReplace "(.*)\/.*" "$1"
-								SayRest
-								Say "/120x120-50.jpg"
-							json_unselect_object
-						json_unselect_object
-					EndIf
-					Say "|"
-				
-					# %Title%
-					json_select_many "titleLinks" "title" " / "
-					SayRest
-					Say "|"
-				
-					# %Artist%
-					json_select_many "subtitleLinks" "title" ", "
-					SayRest
-					Say "|"
-					
-					# %Tracks%
-					json_select "trackCount"
-					SayNextNumber
-					Say "|"
-					
-					# %Kind%
-					Say "Album"
-					Say "|"
-					
-					# %Explicit%
-					json_select "showExplicitBadge"
-					If "1"
-						Say "Yes"
-					EndIf
-					
-					SayNewline
-					Set "FoundAlbum"
-					
-				EndIf
-				IfOutput "FoundSong"
-				
-					# %_coverurl%
-					json_select_object "artwork"
-					IfNot ""
-							json_select_object "dictionary"
-								json_select "url"
-								RegexpReplace "(.*)\/.*" "$1"
-								SayRest
-								Say "/120x120-50.jpg"
-							json_unselect_object
-						json_unselect_object
-					EndIf
-					Say "|"
-
-					# %Title%
-					json_select "title"
-					SayRest
-					Say "|"
-				
-					# %Artist%
-					json_select_many "subtitleLinks" "title" ", "
-					SayRest
-					Say "|"
-					
-					# %Tracks%
-					json_select "trackCount"
-					Say "|"
-					
-					# %Kind%
-					Say "Song (Album)"
-					Say "|"
-
-					# %Explicit%
-					json_select "showExplicitBadge"
-					If "1"
-						Say "Yes"
-					EndIf
-					
-					SayNewline
-					Set "FoundSong"
-					
-				EndIf
-				IfOutput "FoundMusicVideo"
-				
-					# %_coverurl%
-					json_select_object "artwork"
-					IfNot ""
-							json_select_object "dictionary"
-								json_select "url"
-								RegexpReplace "(.*)\/.*" "$1"
-								SayRest
-								Say "/120x120-50.jpg"
-							json_unselect_object
-						json_unselect_object
-					EndIf
-					Say "|"
-
-					# %Title%
-					json_select_many "titleLinks" "title" " / "
-					SayRest
-					Say "|"
-				
-					# %Artist%
-					json_select_many "subtitleLinks" "title" ", "
-					SayRest
-					Say "|"
-					
-					# %Tracks%
-					json_select "trackCount"
-					Say "|"
-					
-					# %Kind%
-					Say "Music Video"
-					Say "|"
-
-					# %Explicit%
-					json_select "showExplicitBadge"
-					If "1"
-						Say "Yes"
-					EndIf
-					
-					SayNewline
-					Set "FoundMusicVideo"
-					
-				EndIf
-			json_foreach_end
+json_select_object "intent"
+	json_select "term"
+	If "https://music.apple.com/"
+		OutputTo "FallbackItem"
+		SayRest
+		OutputTo "FallbackTerm"
+		Say "Apple Music URL"
+		Set "FoundWebURL" "True"
+	Else
+		OutputTo "FallbackItem"
+		Say "https://music.apple.com/"
+		json_select "storefront"
+		SayRest
+		Say "/album/"
+		json_select "term"
+		SayNextNumber
+		json_select "language"
+		IfNot ""
+			Say "?l="
+			SayRest
 		EndIf
-	json_foreach_end
+		OutputTo "FallbackTerm"
+		json_select "term"
+		Say "Apple Music ID: "
+		SayNextNumber
+	EndIf
+	OutputTo "Output"
 json_unselect_object
+
+IfNotOutput "FoundWebURL"
+	json_select_object "data"
+		json_foreach "sections"
+			json_select "id"
+			If "search-results-empty-header"
+				Set "Output"
+				SayOutput "FallbackItem"
+				Say "|"
+				SayOutput "FallbackItem"
+				Say "||"
+				SayOutput "FallbackTerm"
+				Say "||||"
+			Else
+				json_select "itemKind"
+				IfNot "topSearchLockup"
+					json_foreach "items"
+						json_select_object "contentDescriptor"
+							json_select "kind"
+							
+							# Primary
+							If "album"
+								Set "FoundAlbum" "True"
+								
+								# %_url%
+								json_select "url"
+								SayRest
+								Say "|"
+								
+								# %_preview%
+								json_select "url"
+								SayRest
+								Say "|"
+							
+							EndIf
+							If "song"
+								Set "FoundSong" "True"
+								
+								# %_url%
+								json_select "url"
+								SayRest
+								Say "|"
+								
+								# %_preview%
+								json_select "url"
+								SayRest
+								Say "|"
+								
+							EndIf
+							If "musicVideo"
+								Set "FoundMusicVideo" "True"
+								
+								# %_url%
+								json_select "url"
+								SayRest
+								Say "|"
+								
+								# %_preview%
+								json_select "url"
+								SayRest
+								Say "|"
+								
+							EndIf
+						json_unselect_object
+						
+						# Secondary
+						IfOutput "FoundAlbum"
+						
+							# %_coverurl%
+							json_select_object "artwork"
+							IfNot ""
+									json_select_object "dictionary"
+										json_select "url"
+										RegexpReplace "(.*)\/.*" "$1"
+										SayRest
+										Say "/120x120-50.jpg"
+									json_unselect_object
+								json_unselect_object
+							EndIf
+							Say "|"
+						
+							# %Title%
+							json_select_many "titleLinks" "title" " / "
+							SayRest
+							Say "|"
+						
+							# %Artist%
+							json_select_many "subtitleLinks" "title" ", "
+							SayRest
+							Say "|"
+							
+							# %Tracks%
+							json_select "trackCount"
+							SayNextNumber
+							Say "|"
+							
+							# %Kind%
+							Say "Album"
+							Say "|"
+							
+							# %Explicit%
+							json_select "showExplicitBadge"
+							If "1"
+								Say "Yes"
+							EndIf
+							
+							SayNewline
+							Set "FoundAlbum"
+							
+						EndIf
+						IfOutput "FoundSong"
+						
+							# %_coverurl%
+							json_select_object "artwork"
+							IfNot ""
+									json_select_object "dictionary"
+										json_select "url"
+										RegexpReplace "(.*)\/.*" "$1"
+										SayRest
+										Say "/120x120-50.jpg"
+									json_unselect_object
+								json_unselect_object
+							EndIf
+							Say "|"
+		
+							# %Title%
+							json_select "title"
+							SayRest
+							Say "|"
+						
+							# %Artist%
+							json_select_many "subtitleLinks" "title" ", "
+							SayRest
+							Say "|"
+							
+							# %Tracks%
+							json_select "trackCount"
+							Say "|"
+							
+							# %Kind%
+							Say "Song (Album)"
+							Say "|"
+		
+							# %Explicit%
+							json_select "showExplicitBadge"
+							If "1"
+								Say "Yes"
+							EndIf
+							
+							SayNewline
+							Set "FoundSong"
+							
+						EndIf
+						IfOutput "FoundMusicVideo"
+						
+							# %_coverurl%
+							json_select_object "artwork"
+							IfNot ""
+									json_select_object "dictionary"
+										json_select "url"
+										RegexpReplace "(.*)\/.*" "$1"
+										SayRest
+										Say "/120x120-50.jpg"
+									json_unselect_object
+								json_unselect_object
+							EndIf
+							Say "|"
+		
+							# %Title%
+							json_select_many "titleLinks" "title" " / "
+							SayRest
+							Say "|"
+						
+							# %Artist%
+							json_select_many "subtitleLinks" "title" ", "
+							SayRest
+							Say "|"
+							
+							# %Tracks%
+							json_select "trackCount"
+							Say "|"
+							
+							# %Kind%
+							Say "Music Video"
+							Say "|"
+		
+							# %Explicit%
+							json_select "showExplicitBadge"
+							If "1"
+								Say "Yes"
+							EndIf
+							
+							SayNewline
+							Set "FoundMusicVideo"
+							
+						EndIf
+					json_foreach_end
+				EndIf
+			EndIf
+		json_foreach_end
+	json_unselect_object
+Else
+	Set "Output"
+	SayOutput "FallbackItem"
+	Say "|"
+	SayOutput "FallbackItem"
+	Say "||"
+	SayOutput "FallbackTerm"
+	Say "||||"
+	Set "FoundWebURL"
+EndIf
 
 json "off"
 
 [ParserScriptAlbum]=...
 
-FindLine "<script type=\"application/json\" id=\"serialized-server-data\">"
+FindLine "<script type=\"application/json\" id=\"serialized-server-data\">" 1 1
 RegexpReplace ".*<script type=\"application/json\" id=\"serialized-server-data\">\[(.*)\]<\/script>.*" "$1"
 
 json "on" "current"
@@ -216,6 +267,7 @@ json "on" "current"
 # debug "on" "debug-album.txt"
 
 json_select_object "data"
+	IfNot ""
 	json_foreach "sections"
 	
 		json_select "itemKind"
@@ -579,9 +631,13 @@ json_select_object "data"
 		EndIf
 		Set "ValidSection"
 	json_foreach_end
+	Else
+		Set "NoDataFound" "True"
+	EndIf
 json_unselect_object
 
 json_select_object "data"
+IfNot ""
 	json_select_object "seoData"
 		
 		OutputTo "YEAR"
@@ -665,9 +721,11 @@ json_select_object "data"
 		json_foreach_end
 		
 	json_unselect_object
+	EndIf
 json_unselect_object
 
 json_select_object "intent"
+	IfNot ""
 	json_select_object "contentDescriptor"
 		json_select_object "locale"
 			json_select "storefront"
@@ -789,11 +847,14 @@ json_select_object "intent"
 			SayRest
 		json_unselect_object
 	json_unselect_object
+	EndIf
 json_unselect_object
-
-json "off"
 
 # Cleanup
 Set "TEMP_ALBUMARTISTID"
+
+IfOutput "NoDataFound"
+	Set "Output"
+EndIf
 
 json "off"
