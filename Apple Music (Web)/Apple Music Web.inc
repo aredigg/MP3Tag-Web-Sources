@@ -1,7 +1,7 @@
-# Apple Music parser v3.4 for MP3Tag
+# Apple Music parser v3.5 for MP3Tag
 # © 2021-2022 All Rights Reserved
 [Name]=Apple Music
-[BasedOn]=https://music.apple.com
+[BasedOn]=https://music.apple.com/
 [WordSeparator]=%20
 [Encoding]=url-utf-8
 [IndexFormat]=%_url%|%_preview%|%_coverurl%|%Title%|%Artist%|%Tracks%|%Kind%|%Explicit%
@@ -13,7 +13,7 @@ RegexpReplace ".*<script type=\"application/json\" id=\"serialized-server-data\"
 
 json "on" "current"
 
-# debug "on" "debug-index.txt"
+debug "on" "debug-index.txt"
 
 json_select_object "intent"
 	json_select "term"
