@@ -1,0 +1,52 @@
+{
+	"key": "apple music",
+	"title": "Apple Music Web Source Settings",
+	"settings": [
+	{
+		"type": "string",
+		"key": "coverartSize",
+		"title": "Size of the cover art",
+		"description": "Select the size and quality of the cover art to embed.",
+		"choices": [
+			"600 pixels - 50 %",
+			"600 pixels - 90 %",
+			"1200 pixels - 50 %",
+			"1200 pixels - 90 %",
+			"2400 pixels - 50 %",
+			"2400 pixels - 90 %",
+			"3600 pixels - 50 %",
+			"3600 pixels - 90 %",
+			"Original quality"
+		],
+		"default": "1200 pixels - 50 %"
+	},
+	{
+		"type": "bool",
+		"key": "originalTitles",
+		"title": "Original album and artist titles",
+		"description": "Unselect for shortened titles.",
+		"default": true
+	},
+	{
+		"type": "bool",
+		"key": "naturalTitles",
+		"title": "Use natural artist titles",
+		"description": "Unselect if you want to split the artist(s).",
+		"default": true
+	},
+	{
+		"type": "bool",
+		"key": "addSortTitles",
+		"title": "Populate the sort tags",
+		"description": "Select to also add data to the sort tags.",
+		"default": false
+	},
+	{
+		"type": "bool",
+		"key": "singleGenre",
+		"title": "Single genre only",
+		"description": "Select to add only the first genre.",
+		"default": false
+	}
+	]
+}

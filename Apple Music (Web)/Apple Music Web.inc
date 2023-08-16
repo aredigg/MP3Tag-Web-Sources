@@ -1,10 +1,13 @@
-# Apple Music parser v3.5 for MP3Tag
-# © 2021-2022 All Rights Reserved
+# Apple Music parser v3.6 for MP3Tag
+# © 2021-2023 All Rights Reserved
 [Name]=Apple Music
 [BasedOn]=https://music.apple.com/
 [WordSeparator]=%20
 [Encoding]=url-utf-8
 [IndexFormat]=%_url%|%_preview%|%_coverurl%|%Title%|%Artist%|%Tracks%|%Kind%|%Explicit%
+[MinAppVersionMac]=1.8.2
+[MinAppVersionWin]=3.21h
+[Settings]=&Apple Music#Settings (English).settings
 
 [ParserScriptIndex]=...
 
@@ -13,7 +16,7 @@ RegexpReplace ".*<script type=\"application/json\" id=\"serialized-server-data\"
 
 json "on" "current"
 
-debug "on" "debug-index.txt"
+# debug "on" "debug-index.txt"
 
 json_select_object "intent"
 	json_select "term"
@@ -342,56 +345,66 @@ json_select_object "data"
 					IfNot "0"
 					
 						IfOutput "SectionAlbum"
-							
-							OutputTo "ALBUMARTIST"
-							IfOutput "ALBUMARTIST"
-								# Say "\\\\"
-								Say ", "
-							EndIf
-							json_select "title"
-							Replace "Various Artists" ""
-							Replace "Varios Artistas" ""
-							Replace "Vários Artistas" ""
-							Replace "Vários intérpretes" ""
-							Replace "群星" ""
-							Replace "群星" ""
-							Replace "Eri Esittäjiä" ""
-							Replace "Multi-interprètes" ""
-							Replace "Verschiedene Interpreten" ""
-							Replace "Verschillende artiesten" ""
-							Replace "Artisti Vari" ""
-							Replace "ヴァリアス・アーティスト" ""
-							Replace "Diverse Artister" ""
-							Replace "Разные артисты" ""
-							Replace "Разные исполнители" ""
-							Replace "Διάφοροι καλλιτέχνες" ""
-							Replace "Blandade Artister" ""
-							Replace "אמנים שונים" ""
-							Replace "Çeşitli Sanatçılar" ""
-							Replace "مختلف الفنانين" ""
-							Replace "فنانون متنوعون" ""
-							Replace "فنانون متعددون" ""
-							Replace "Різні виконавці" ""
-							Replace "รวมศิลปิน" ""
-							Replace "Nhiều Nghệ Sĩ" ""
-							SayRest
 
-							Set "ALBUMARTISTSORT"
-							OutputTo "ALBUMARTISTSORT"
-							SayOutput "ALBUMARTIST"
+							IfNotVar "naturalTitles" "true"
+
+								OutputTo "ALBUMARTIST"
+								IfOutput "ALBUMARTIST"
+									# Say "\\\\"
+									Say ", "
+								EndIf
+								json_select "title"
+								Replace "Various Artists" ""
+								Replace "Varios Artistas" ""
+								Replace "Vários Artistas" ""
+								Replace "Vários intérpretes" ""
+								Replace "群星" ""
+								Replace "群星" ""
+								Replace "Eri Esittäjiä" ""
+								Replace "Multi-interprètes" ""
+								Replace "Verschiedene Interpreten" ""
+								Replace "Verschillende artiesten" ""
+								Replace "Artisti Vari" ""
+								Replace "ヴァリアス・アーティスト" ""
+								Replace "Diverse Artister" ""
+								Replace "Разные артисты" ""
+								Replace "Разные исполнители" ""
+								Replace "Διάφοροι καλλιτέχνες" ""
+								Replace "Blandade Artister" ""
+								Replace "אמנים שונים" ""
+								Replace "Çeşitli Sanatçılar" ""
+								Replace "مختلف الفنانين" ""
+								Replace "فنانون متنوعون" ""
+								Replace "فنانون متعددون" ""
+								Replace "Різні виконавці" ""
+								Replace "รวมศิลปิน" ""
+								Replace "Nhiều Nghệ Sĩ" ""
+								SayRest
+
+								IfVar "addSortTitles" "true"
+									Set "ALBUMARTISTSORT"
+									OutputTo "ALBUMARTISTSORT"
+									SayOutput "ALBUMARTIST"
+								EndIf
+
+							EndIf
 							
 						EndIf
 						
 						IfOutput "SectionSong"
 							
-							OutputTo "ARTIST"
-							IfOutput "TEMP_ARTIST"
-								# Say "\\\\"
-								Say ", "
+							IfNotVar "naturalTitles" "true"
+
+								OutputTo "ARTIST"
+								IfOutput "TEMP_ARTIST"
+									# Say "\\\\"
+									Say ", "
+								EndIf
+								json_select "title"
+								SayRest
+								Set "TEMP_ARTIST" "True"
+
 							EndIf
-							json_select "title"
-							SayRest
-							Set "TEMP_ARTIST" "True"
 
 						EndIf
 
@@ -441,9 +454,12 @@ json_select_object "data"
 					Else
 						
 						IfOutput "SectionSong"
-							OutputTo "ARTIST"
-							SayOutput "ALBUMARTIST"
-							Say "|"
+
+							IfNotVar "naturalTitles" "true"
+								OutputTo "ARTIST"
+								SayOutput "ALBUMARTIST"
+								Say "|"
+							EndIf
 							OutputTo "ITUNESARTISTID"
 							SayOutput "TEMP_ALBUMARTISTID"
 							Say "|"
@@ -477,10 +493,37 @@ json_select_object "data"
 				IfNot ""
 						json_select_object "dictionary"
 							json_select "url"
+							IfVar "coverartSize" "Original quality"
+								Replace "://is" "://a"
+								Replace "-ssl.mzstatic.com/image/thumb/" ".mzstatic.com/us/r1000/0/"
+							EndIf
 							RegexpReplace "(.*)\/.*" "$1"
 							SayRest
 							# Width x Height - JPEG Quality
-							Say "/2400x2400-50.jpg"
+							IfVar "coverartSize" "600 pixels - 50 %"
+								Say "/600x600-50.jpg"
+							EndIf
+							IfVar "coverartSize" "600 pixels - 90 %"
+								Say "/600x600-90.jpg"
+							EndIf
+							IfVar "coverartSize" "1200 pixels - 50 %"
+								Say "/1200x1200-50.jpg"
+							EndIf
+							IfVar "coverartSize" "1200 pixels - 90 %"
+								Say "/1200x1200-90.jpg"
+							EndIf
+							IfVar "coverartSize" "2400 pixels - 50 %"
+								Say "/2400x2400-50.jpg"
+							EndIf
+							IfVar "coverartSize" "2400 pixels - 90 %"
+								Say "/2400x2400-90.jpg"
+							EndIf
+							IfVar "coverartSize" "3600 pixels - 50 %"
+								Say "/3600x3600-50.jpg"
+							EndIf
+							IfVar "coverartSize" "3600 pixels - 90 %"
+								Say "/3600x3600-90.jpg"
+							EndIf
 						json_unselect_object
 					json_unselect_object
 				EndIf
@@ -491,26 +534,33 @@ json_select_object "data"
 				
 					OutputTo "ALBUM"
 					json_select "title"
-					Replace " - Single" ""
-					Replace " - EP" ""
-					RegexpReplace "\(.*\)" ""
-					RegexpReplace "\[.*\]" ""
+					IfNotVar "originalTitles" "true"
+						Replace " - Single" ""
+						Replace " - EP" ""
+						RegexpReplace "\(.*\)" ""
+						RegexpReplace "\[.*\]" ""
+					EndIf
 					If ""
 						json_select "title"
 					EndIf
 					SayRest
 					
-					OutputTo "CONTENTGROUP"
-					json_select "title"
-					SayRegexp "(?<=\()[^)]*(?=\))"
-					IfOutput "CONTENTGROUP"
-						SayNewline
-					EndIf
-					SayRegexp "(?<=\[)[^)]*(?=\])"
 					
-					OutputTo "ALBUMSORT"
-					json_select "title"
-					SayRest
+					IfNotVar "originalTitles" "true"
+						OutputTo "CONTENTGROUP"
+						json_select "title"
+						SayRegexp "(?<=\()[^)]*(?=\))"
+						IfOutput "CONTENTGROUP"
+							SayNewline
+						EndIf
+						SayRegexp "(?<=\[)[^)]*(?=\])"
+					EndIf
+					
+					IfVar "addSortTitles" "true"
+						OutputTo "ALBUMSORT"
+						json_select "title"
+						SayRest
+					EndIf
 					
 					OutputTo "TOTALTRACKS"
 					json_select "trackCount"
@@ -579,33 +629,41 @@ json_select_object "data"
 					
 					OutputTo "TITLE"
 					json_select "title"
-					RegexpReplace "\(.*\)" ""
-					RegexpReplace "\[.*\]" ""
-					If ""
-						Set "Skip_Comment" "True"
-						json_select "title"		
-						SayRegexp "(?<=\()[^)]*(?=\))"
+					IfNotVar "originalTitles" "true"
+						RegexpReplace "\(.*\)" ""
+						RegexpReplace "\[.*\]" ""
+						If ""
+							Set "Skip_Comment" "True"
+							json_select "title"		
+							SayRegexp "(?<=\()[^)]*(?=\))"
+						Else
+							SayRest
+						EndIf
 					Else
 						SayRest
 					EndIf
 					Say "|"
 					
-					OutputTo "COMMENT"
-					IfNotOutput "Skip_Comment"
-						json_select "title"
-						SayRegexp "(?<=\()[^)]*(?=\))"
-						IfOutput "COMMENT"
-							SayNewline
+					IfNotVar "originalTitles" "true"
+						OutputTo "COMMENT"
+						IfNotOutput "Skip_Comment"
+							json_select "title"
+							SayRegexp "(?<=\()[^)]*(?=\))"
+							IfOutput "COMMENT"
+								SayNewline
+							EndIf
+							SayRegexp "(?<=\[)[^)]*(?=\])"
+							Set "Skip_Comment"
 						EndIf
-						SayRegexp "(?<=\[)[^)]*(?=\])"
-						Set "Skip_Comment"
+						Say "|"
 					EndIf
-					Say "|"
 					
-					OutputTo "TITLESORT"
-					json_select "title"
-					SayRest
-					Say "|"
+					IfVar "addSortTitles" "true"
+						OutputTo "TITLESORT"
+						json_select "title"
+						SayRest
+						Say "|"
+					EndIf
 					
 					OutputTo "COMPOSER"
 					json_select "composer"
@@ -616,6 +674,18 @@ json_select_object "data"
 					json_select "discNumber"
 					SayNextNumber
 					Say "|"
+
+					IfVar "naturalTitles" "true"
+						OutputTo "ARTIST"
+						json_select "artistName"
+						SayRest
+						Say "|"
+
+						OutputTo "ALBUMARTIST"
+						json_select "containerArtistName"
+						SayRest
+						Say "|"
+					EndIf
 
 					Set "TOTALDISCS"
 					OutputTo "TOTALDISCS"
@@ -652,18 +722,27 @@ IfNot ""
 				SayRest
 				Say "|"
 
+				OutputTo "LANGUAGE"
+				json_select "audioLocale"
+				SayRest
+				Say "|"
+
 				OutputTo "GENRE"
-				json_select_array "genreNames" -1 "\\\\"
-				Replace "\\\\Musica" ""
-				Replace "\\\\Music" ""
-				Replace "\\\\Musiikki" ""
-				Replace "\\\\Musikk" ""
-				Replace "\\\\Musik" ""
-				Replace "\\\\Musique" ""
-				Replace "\\\\Muzyka" ""
-				Replace "\\\\Müzik" ""
-				Replace "\\\\Música" ""
-				Replace "\\\\Музика" ""
+				IfVar "singleGenre" "true"
+					json_select_array "genreNames" 1 ""
+				Else
+					json_select_array "genreNames" -1 "\\\\"
+					Replace "\\\\Musica" ""
+					Replace "\\\\Music" ""
+					Replace "\\\\Musiikki" ""
+					Replace "\\\\Musikk" ""
+					Replace "\\\\Musik" ""
+					Replace "\\\\Musique" ""
+					Replace "\\\\Muzyka" ""
+					Replace "\\\\Müzik" ""
+					Replace "\\\\Música" ""
+					Replace "\\\\Музика" ""
+				EndIf
 				SayRest
 				Say "|"
 
