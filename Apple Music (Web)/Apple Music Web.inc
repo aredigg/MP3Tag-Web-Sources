@@ -1,13 +1,13 @@
-# Apple Music parser v3.6 for MP3Tag
+# Apple Music parser v3.7 for MP3Tag
 # © 2021-2023 All Rights Reserved
 [Name]=Apple Music
 [BasedOn]=https://music.apple.com/
 [WordSeparator]=%20
 [Encoding]=url-utf-8
 [IndexFormat]=%_url%|%_preview%|%_coverurl%|%Title%|%Artist%|%Tracks%|%Kind%|%Explicit%
-[MinAppVersionMac]=1.8.2
-[MinAppVersionWin]=3.21h
-[Settings]=&Apple Music#Settings (English).settings
+[MinAppVersionMac]=1.8.4
+[MinAppVersionWin]=3.21i
+[Settings]=&Apple Music#Settings….settings
 
 [ParserScriptIndex]=...
 

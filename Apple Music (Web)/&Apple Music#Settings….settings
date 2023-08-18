@@ -48,5 +48,38 @@
 		"description": "Select to add only the first genre.",
 		"default": false
 	}
-	]
+	],
+	"localizations": {
+		"de": [
+		{
+			"key": "apple music",
+			"title": "Apple Music Web Source Einstellungen"
+		},
+		{
+			"key": "coverartSize",
+			"title": "Größe des Covers",
+			"description": "Wählen Sie die Größe und Qualität des einzubettenden Covers."
+		},
+		{
+			"key": "originalTitles",
+			"title": "Original Album- und Künstler:innentitel",
+			"description": "Abwählen für verkürzte Titel."
+		},
+		{
+			"key": "naturalTitles",
+			"title": "Natürliche Künstler:innentitel verwenden",
+			"description": "Abwählen für aufteilte Künstler:innentitel."
+		},
+		{
+			"key": "addSortTitles",
+			"title": "Die Sortier-tags ausfüllen",
+			"description": "Fügen Sie Daten zu den Sortier-tags hinzu."
+		},
+		{
+			"key": "singleGenre",
+			"title": "Nur einzelne Genres",
+			"description": "Wählen Sie, um nur das erste Genre hinzuzufügen."
+		}
+		]
+	}
 }
