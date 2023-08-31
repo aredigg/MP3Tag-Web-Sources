@@ -47,6 +47,47 @@
 		"title": "Single genre only",
 		"description": "Select to add only the first genre.",
 		"default": false
+	},
+	{
+		"type": "separator",
+		"key": "searchListItems",
+		"title": "Select items included in search"
+	},
+	{
+		"type": "bool",
+		"key": "listAlbums",
+		"title": "Albums",
+		"default": true
+	},
+	{
+		"type": "bool",
+		"key": "listSongs",
+		"title": "Songs",
+		"default": true
+	},
+	{
+		"type": "bool",
+		"key": "listMusicVideos",
+		"title": "Music Videos",
+		"default": true
+	},
+	{
+		"type": "bool",
+		"key": "listExtraVideos",
+		"title": "Extra Videos",
+		"default": false
+	},
+	{
+		"type": "bool",
+		"key": "listPlaylists",
+		"title": "Playlists",
+		"default": false
+	},
+	{
+		"type": "bool",
+		"key": "listRadioStations",
+		"title": "Radio Stations",
+		"default": false
 	}
 	],
 	"localizations": {
@@ -79,7 +120,36 @@
 			"key": "singleGenre",
 			"title": "Nur einzelne Genres",
 			"description": "Wählen Sie, um nur das erste Genre hinzuzufügen."
+		},
+		{
+			"key": "searchListItems",
+			"title": "In der Suche enthaltene Elemente auswählen"
+		},
+		{
+			"key": "listAlbums",
+			"title": "Alben"
+		},
+		{
+			"key": "listSongs",
+			"title": "Titel"
+		},
+		{
+			"key": "listMusicVideos",
+			"title": "Musikvideos"
+		},
+		{
+			"key": "listExtraVideos",
+			"title": "Mehr Videos"
+		},
+		{
+			"key": "listPlaylists",
+			"title": "Playlists"
+		},
+		{
+			"key": "listRadioStations",
+			"title": "Radiosender"
 		}
+
 		]
 	}
 }

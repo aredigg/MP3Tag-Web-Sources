@@ -1,4 +1,4 @@
-# Apple Music parser v3.7 for MP3Tag
+# Apple Music parser v3.9 for MP3Tag
 # © 2021-2023 All Rights Reserved
 [Name]=Apple Music
 [BasedOn]=https://music.apple.com/
@@ -6,7 +6,7 @@
 [Encoding]=url-utf-8
 [IndexFormat]=%_url%|%_preview%|%_coverurl%|%Title%|%Artist%|%Tracks%|%Kind%|%Explicit%
 [MinAppVersionMac]=1.8.4
-[MinAppVersionWin]=3.21i
+[MinAppVersionWin]=3.22
 [Settings]=&Apple Music#Settings….settings
 
 [ParserScriptIndex]=...
@@ -67,47 +67,115 @@ IfNotOutput "FoundWebURL"
 							json_select "kind"
 							
 							# Primary
-							If "album"
-								Set "FoundAlbum" "True"
+							IfVar "listAlbums" "true"
+								If "album"
+									Set "FoundAlbum" "True"
+									
+									# %_url%
+									json_select "url"
+									SayRest
+									Say "|"
+									
+									# %_preview%
+									json_select "url"
+									SayRest
+									Say "|"
 								
-								# %_url%
-								json_select "url"
-								SayRest
-								Say "|"
-								
-								# %_preview%
-								json_select "url"
-								SayRest
-								Say "|"
-							
+								EndIf
 							EndIf
-							If "song"
-								Set "FoundSong" "True"
+							IfVar "listSongs" "true"
+								If "song"
+									Set "FoundSong" "True"
 								
-								# %_url%
-								json_select "url"
-								SayRest
-								Say "|"
+									# %_url%
+									json_select "url"
+									SayRest
+									Say "|"
 								
-								# %_preview%
-								json_select "url"
-								SayRest
-								Say "|"
+									# %_preview%
+									json_select "url"
+									SayRest
+									Say "|"
 								
+								EndIf
 							EndIf
-							If "musicVideo"
-								Set "FoundMusicVideo" "True"
+							IfVar "listMusicVideos" "true"
+								If "musicVideo"
+									Set "FoundMusicVideo" "True"
 								
-								# %_url%
-								json_select "url"
-								SayRest
-								Say "|"
+									# %_url%
+									json_select "url"
+									SayRest
+									Say "|"
 								
-								# %_preview%
-								json_select "url"
-								SayRest
-								Say "|"
+									# %_preview%
+									json_select "url"
+									SayRest
+									Say "|"
 								
+								EndIf
+							EndIf
+							IfVar "listExtraVideos" "true"
+								If "artistUploadedVideo"
+									Set "FoundExtraVideo" "True"
+								
+									# %_url%
+									json_select "url"
+									SayRest
+									Say "|"
+								
+									# %_preview%
+									json_select "url"
+									SayRest
+									Say "|"
+								
+								EndIf
+							EndIf
+							IfVar "listPlaylists" "true"
+								If "playlist"
+									Set "FoundPlaylist" "True"
+								
+									# %_url%
+									json_select "url"
+									SayRest
+									Say "|"
+								
+									# %_preview%
+									json_select "url"
+									SayRest
+									Say "|"
+								
+								EndIf
+							EndIf
+							IfVar "listRadioStations" "true"
+								If "radioStation"
+									Set "FoundRadioStation" "True"
+								
+									# %_url%
+									json_select "url"
+									SayRest
+									Say "|"
+								
+									# %_preview%
+									json_select "url"
+									SayRest
+									Say "|"
+								
+								EndIf
+								If "appleCurator"
+									Set "FoundRadioStation" "True"
+								
+									# %_url%
+									json_select "url"
+									SayRest
+									Say "|"
+								
+									# %_preview%
+									json_select "url"
+									SayRest
+									Say "|"
+								
+								EndIf
 							EndIf
 						json_unselect_object
 						
@@ -240,6 +308,135 @@ IfNotOutput "FoundWebURL"
 							
 							SayNewline
 							Set "FoundMusicVideo"
+							
+						EndIf
+						IfOutput "FoundExtraVideo"
+						
+							# %_coverurl%
+							json_select_object "artwork"
+							IfNot ""
+									json_select_object "dictionary"
+										json_select "url"
+										RegexpReplace "(.*)\/.*" "$1"
+										SayRest
+										Say "/120x120-50.jpg"
+									json_unselect_object
+								json_unselect_object
+							EndIf
+							Say "|"
+		
+							# %Title%
+							json_select_many "titleLinks" "title" " / "
+							SayRest
+							Say "|"
+						
+							# %Artist%
+							json_select_many "subtitleLinks" "title" ", "
+							SayRest
+							Say "|"
+							
+							# %Tracks%
+							json_select "trackCount"
+							Say "|"
+							
+							# %Kind%
+							Say "Video"
+							Say "|"
+		
+							# %Explicit%
+							json_select "showExplicitBadge"
+							If "1"
+								Say "Yes"
+							EndIf
+							
+							SayNewline
+							Set "FoundExtraVideo"
+							
+						EndIf
+						IfOutput "FoundPlaylist"
+						
+							# %_coverurl%
+							json_select_object "artwork"
+							IfNot ""
+									json_select_object "dictionary"
+										json_select "url"
+										RegexpReplace "(.*)\/.*" "$1"
+										SayRest
+										Say "/120x120-50.jpg"
+									json_unselect_object
+								json_unselect_object
+							EndIf
+							Say "|"
+		
+							# %Title%
+							json_select_many "titleLinks" "title" " / "
+							SayRest
+							Say "|"
+						
+							# %Artist%
+							json_select_many "subtitleLinks" "title" ", "
+							SayRest
+							Say "|"
+							
+							# %Tracks%
+							json_select "trackCount"
+							Say "|"
+							
+							# %Kind%
+							Say "Playlist"
+							Say "|"
+		
+							# %Explicit%
+							json_select "showExplicitBadge"
+							If "1"
+								Say "Yes"
+							EndIf
+							
+							SayNewline
+							Set "FoundPlaylist"
+							
+						EndIf
+						IfOutput "FoundRadioStation"
+						
+							# %_coverurl%
+							json_select_object "artwork"
+							IfNot ""
+									json_select_object "dictionary"
+										json_select "url"
+										RegexpReplace "(.*)\/.*" "$1"
+										SayRest
+										Say "/120x120-50.jpg"
+									json_unselect_object
+								json_unselect_object
+							EndIf
+							Say "|"
+		
+							# %Title%
+							json_select_many "titleLinks" "title" " / "
+							SayRest
+							Say "|"
+						
+							# %Artist%
+							json_select_many "subtitleLinks" "title" ", "
+							SayRest
+							Say "|"
+							
+							# %Tracks%
+							json_select "trackCount"
+							Say "|"
+							
+							# %Kind%
+							Say "Radio Station"
+							Say "|"
+		
+							# %Explicit%
+							json_select "showExplicitBadge"
+							If "1"
+								Say "Yes"
+							EndIf
+							
+							SayNewline
+							Set "FoundRadioStation"
 							
 						EndIf
 					json_foreach_end
