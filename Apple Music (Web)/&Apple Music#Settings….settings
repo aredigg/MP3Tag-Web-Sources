@@ -30,7 +30,7 @@
 	{
 		"type": "bool",
 		"key": "naturalTitles",
-		"title": "Use natural artist titles",
+		"title": "Use natural artist name(s)",
 		"description": "Unselect if you want to split the artist(s).",
 		"default": true
 	},
@@ -92,64 +92,299 @@
 	],
 	"localizations": {
 		"de": [
-		{
-			"key": "apple music",
-			"title": "Apple Music Web Source Einstellungen"
-		},
-		{
-			"key": "coverartSize",
-			"title": "Größe des Covers",
-			"description": "Wählen Sie die Größe und Qualität des einzubettenden Covers."
-		},
-		{
-			"key": "originalTitles",
-			"title": "Original Album- und Künstler:innentitel",
-			"description": "Abwählen für verkürzte Titel."
-		},
-		{
-			"key": "naturalTitles",
-			"title": "Natürliche Künstler:innentitel verwenden",
-			"description": "Abwählen für aufteilte Künstler:innentitel."
-		},
-		{
-			"key": "addSortTitles",
-			"title": "Die Sortier-tags ausfüllen",
-			"description": "Fügen Sie Daten zu den Sortier-tags hinzu."
-		},
-		{
-			"key": "singleGenre",
-			"title": "Nur einzelne Genres",
-			"description": "Wählen Sie, um nur das erste Genre hinzuzufügen."
-		},
-		{
-			"key": "searchListItems",
-			"title": "In der Suche enthaltene Elemente auswählen"
-		},
-		{
-			"key": "listAlbums",
-			"title": "Alben"
-		},
-		{
-			"key": "listSongs",
-			"title": "Titel"
-		},
-		{
-			"key": "listMusicVideos",
-			"title": "Musikvideos"
-		},
-		{
-			"key": "listExtraVideos",
-			"title": "Mehr Videos"
-		},
-		{
-			"key": "listPlaylists",
-			"title": "Playlists"
-		},
-		{
-			"key": "listRadioStations",
-			"title": "Radiosender"
-		}
-
+			{
+				"key": "apple music",
+				"title": "Apple Music Web Source Einstellungen"
+			},
+			{
+				"key": "coverartSize",
+				"title": "Größe des Covers",
+				"description": "Wählen Sie die Größe und Qualität des einzubettenden Covers."
+			},
+			{
+				"key": "originalTitles",
+				"title": "Original Album- und Künstler:innentitel",
+				"description": "Abwählen für verkürzte Titel."
+			},
+			{
+				"key": "naturalTitles",
+				"title": "Natürliche Künstler:innenname(n) verwenden",
+				"description": "Abwählen für aufteilte Künstler:innenname(n)."
+			},
+			{
+				"key": "addSortTitles",
+				"title": "Die Sortier-tags ausfüllen",
+				"description": "Fügen Sie Daten zu den Sortier-tags hinzu."
+			},
+			{
+				"key": "singleGenre",
+				"title": "Nur einzelne Genres",
+				"description": "Wählen Sie, um nur das erste Genre hinzuzufügen."
+			},
+			{
+				"key": "searchListItems",
+				"title": "In der Suche enthaltene Elemente auswählen"
+			},
+			{
+				"key": "listAlbums",
+				"title": "Alben"
+			},
+			{
+				"key": "listSongs",
+				"title": "Titel"
+			},
+			{
+				"key": "listMusicVideos",
+				"title": "Musikvideos"
+			},
+			{
+				"key": "listExtraVideos",
+				"title": "Mehr Videos"
+			},
+			{
+				"key": "listPlaylists",
+				"title": "Playlists"
+			},
+			{
+				"key": "listRadioStations",
+				"title": "Radiosender"
+			}
+		],
+		"it": [
+			{
+					"key": "apple music",
+					"title": "Impostazioni Sorgente Web Apple Music"
+			},
+			{
+					"key": "coverartSize",
+					"title": "Dimensione della copertina",
+					"description": "Seleziona la dimensione e la qualità della copertina da incorporare."
+			},
+			{
+					"key": "originalTitles",
+					"title": "Titoli originali di album e artisti",
+					"description": "Deseleziona per titoli abbreviati."
+			},
+			{
+					"key": "naturalTitles",
+					"title": "Usa nomi artistici naturali",
+					"description": "Deseleziona se vuoi dividere gli artisti."
+			},
+			{
+					"key": "addSortTitles",
+					"title": "Popola i tag di ordinamento",
+					"description": "Seleziona per aggiungere anche dati ai tag di ordinamento."
+			},
+			{
+					"key": "singleGenre",
+					"title": "Solo un genere",
+					"description": "Seleziona per aggiungere solo il primo genere."
+			},
+			{
+					"key": "searchListItems",
+					"title": "Seleziona elementi inclusi nella ricerca"
+			},
+			{
+					"key": "listAlbums",
+					"title": "Album"
+			},
+			{
+					"key": "listSongs",
+					"title": "Brani"
+			},
+			{
+					"key": "listMusicVideos",
+					"title": "Video musicali"
+			},
+			{
+					"key": "listExtraVideos",
+					"title": "Video extra"
+			},
+			{
+					"key": "listPlaylists",
+					"title": "Playlist"
+			},
+			{
+					"key": "listRadioStations",
+					"title": "Stazioni radio"
+			}
+		],
+		"fr" : [
+			{
+					"key": "apple music",
+					"title": "Paramètres de la source Web Apple Music"
+			},
+			{
+					"key": "coverartSize",
+					"title": "Taille de la pochette",
+					"description": "Sélectionnez la taille et la qualité de la pochette à intégrer."
+			},
+			{
+					"key": "originalTitles",
+					"title": "Titres originaux d'album et d'artiste",
+					"description": "Décochez pour des titres raccourcis."
+			},
+			{
+					"key": "naturalTitles",
+					"title": "Utiliser les noms d'artistes naturels",
+					"description": "Décochez si vous souhaitez diviser les artistes."
+			},
+			{
+					"key": "addSortTitles",
+					"title": "Remplir les tags de tri",
+					"description": "Sélectionnez pour ajouter également des données aux tags de tri."
+			},
+			{
+					"key": "singleGenre",
+					"title": "Un seul genre",
+					"description": "Sélectionnez pour ajouter uniquement le premier genre."
+			},
+			{
+					"key": "searchListItems",
+					"title": "Sélectionner les éléments inclus dans la recherche"
+			},
+			{
+					"key": "listAlbums",
+					"title": "Albums"
+			},
+			{
+					"key": "listSongs",
+					"title": "Chansons"
+			},
+			{
+					"key": "listMusicVideos",
+					"title": "Clips musicaux"
+			},
+			{
+					"key": "listExtraVideos",
+					"title": "Vidéos supplémentaires"
+			},
+			{
+					"key": "listPlaylists",
+					"title": "Listes de lecture"
+			},
+			{
+					"key": "listRadioStations",
+					"title": "Stations de radio"
+			}
+		],
+		"es" : [
+			{
+					"key": "apple music",
+					"title": "Configuraciones de la Fuente Web de Apple Music"
+			},
+			{
+					"key": "coverartSize",
+					"title": "Tamaño de la portada",
+					"description": "Selecciona el tamaño y la calidad de la portada para incrustar."
+			},
+			{
+					"key": "originalTitles",
+					"title": "Títulos originales de álbum y artista",
+					"description": "Desmarca para títulos acortados."
+			},
+			{
+					"key": "naturalTitles",
+					"title": "Usar nombres de artistas naturales",
+					"description": "Desmarca si quieres dividir los artistas."
+			},
+			{
+					"key": "addSortTitles",
+					"title": "Llenar las etiquetas de clasificación",
+					"description": "Selecciona para también añadir datos a las etiquetas de clasificación."
+			},
+			{
+					"key": "singleGenre",
+					"title": "Solo un género",
+					"description": "Selecciona para añadir solo el primer género."
+			},
+			{
+					"key": "searchListItems",
+					"title": "Seleccionar elementos incluidos en la búsqueda"
+			},
+			{
+					"key": "listAlbums",
+					"title": "Álbumes"
+			},
+			{
+					"key": "listSongs",
+					"title": "Canciones"
+			},
+			{
+					"key": "listMusicVideos",
+					"title": "Videos musicales"
+			},
+			{
+					"key": "listExtraVideos",
+					"title": "Videos adicionales"
+			},
+			{
+					"key": "listPlaylists",
+					"title": "Listas de reproducción"
+			},
+			{
+					"key": "listRadioStations",
+					"title": "Estaciones de radio"
+			}
+		],
+		"no" : [
+			{
+					"key": "apple music",
+					"title": "Apple Music Webkilde-innstillinger"
+			},
+			{
+					"key": "coverartSize",
+					"title": "Størrelse på omslagsbildet",
+					"description": "Velg størrelse og kvalitet på omslagsbildet som skal legges inn."
+			},
+			{
+					"key": "originalTitles",
+					"title": "Originale album- og artisttitler",
+					"description": "Fjern markeringen for forkortede titler."
+			},
+			{
+					"key": "naturalTitles",
+					"title": "Bruk naturlige artistnavn",
+					"description": "Fjern markeringen hvis du vil dele opp artist-navnene."
+			},
+			{
+					"key": "addSortTitles",
+					"title": "Fyll ut sorterings-tagger",
+					"description": "Merk for å også legge til data i sorteringsmerkene."
+			},
+			{
+					"key": "singleGenre",
+					"title": "Bare én sjanger",
+					"description": "Merk for å legge til bare den første sjangeren."
+			},
+			{
+					"key": "searchListItems",
+					"title": "Velg elementer som skal inkluderes i søk"
+			},
+			{
+					"key": "listAlbums",
+					"title": "Album"
+			},
+			{
+					"key": "listSongs",
+					"title": "Sanger"
+			},
+			{
+					"key": "listMusicVideos",
+					"title": "Musikkvideoer"
+			},
+			{
+					"key": "listExtraVideos",
+					"title": "Ekstra videoer"
+			},
+			{
+					"key": "listPlaylists",
+					"title": "Spillelister"
+			},
+			{
+					"key": "listRadioStations",
+					"title": "Radiostasjoner"
+			}
 		]
 	}
 }
