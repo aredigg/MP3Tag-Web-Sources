@@ -1,0 +1,274 @@
+# Apple Music parser v4.00b1 for MP3Tag
+# © 2023 All Rights Reserved
+
+[Name]=Apple Music 4
+[BasedOn]=https://music.apple.com/
+[IndexUrl]=https://localhost:8084/v1/catalog/us/search?types=albums&limit=3&term=%s
+[AlbumUrl]=https://localhost:8084
+[SearchBy]=Search for||[$if2([$if2(%ALBUMARTIST%,%ARTIST%)][ %ALBUM%],[%_directory%] [%_parent_directory%])]||%s
+[WordSeparator]=+
+[Encoding]=url-utf-8
+[IndexFormat]=%_url%|%_preview%|%_coverurl%|%Title%|%Artist%|%Genre%|%Label%|%Tracks%|%Date%|%Rating%|%UPC%|%ID%
+[MinAppVersionMac]=1.8.4
+[MinAppVersionWin]=3.22
+
+[ParserScriptIndex]=...
+
+json "on"
+
+# debug "on" "debug-index.txt"
+
+json_select_object "results"
+	json_select_object "albums"
+		IfNot ""
+			json_foreach "data"
+			
+				# %_url%
+				json_select "href"
+				SayRest
+				Say "|"
+				
+				# %_preview%
+				json_select "href"
+				SayRest
+				Say "|"
+				
+				json_select_object "attributes"
+				
+					# %_coverurl%
+					json_select_object "artwork"
+					IfNot ""
+						json_select "url"
+						RegexpReplace "(.*)\/.*" "$1"
+						SayRest
+						Say "/120x120-50.jpg"
+						json_unselect_object
+					EndIf
+					Say "|"
+					
+					# %Title%
+					json_select "name"
+					SayRest
+					Say "|"
+
+					# %Artist%
+					json_select "artistName"
+					SayRest
+					Say "|"
+					
+					# %Genre%
+					json_select_array "genreNames" 1 ""
+					SayRest
+					Say "|"
+					
+					# %Label%
+					json_select "recordLabel"
+					SayRest
+					Say "|"
+					
+					# %Tracks%
+					json_select "trackCount"
+					SayRest
+					Say "|"
+					
+					# %Date%
+					json_select "releaseDate"
+					SayRest
+					Say "|"
+					
+					# %Rating%
+					json_select "contentRating"
+					SayRest
+					Say "|"
+
+					# %UPC%
+					json_select "upc"
+					SayRest
+					Say "|"
+					
+					# %ID%
+					json_select_object "playParams"
+						json_select "id"
+						SayRest
+					json_unselect_object
+					
+				json_unselect_object
+				
+				SayNewline
+				
+			json_foreach_end
+		EndIf
+	json_unselect_object
+json_unselect_object
+
+json "off"
+
+[ParserScriptAlbum]=...
+
+json "on"
+
+# debug "on" "debug-album.txt"
+
+json_foreach "data"
+
+	# ITUNESALBUMID
+	OutputTo "ITUNESALBUMID"
+	json_select "id"
+	SayRest	
+	
+	json_select_object "attributes"
+		
+		# COPYRIGHT
+		OutputTo "COPYRIGHT"
+		json_select "copyright"
+		SayRest
+		
+		# UPC
+		OutputTo "UPC"
+		json_select "upc"
+		SayRest
+		
+		# COVERURL
+		OutputTo "COVERURL"
+		json_select_object "artwork"
+		IfNot ""
+			json_select "url"
+			Replace "://is" "://a"
+			Replace "-ssl.mzstatic.com/image/thumb/" ".mzstatic.com/us/r1000/0/"
+			RegexpReplace "(.*)\/.*" "$1"
+			SayRest
+			json_unselect_object
+		EndIf
+
+		# LABEL
+		OutputTo "LABEL"
+		json_select "recordLabel"
+		SayRest
+
+		# TOTALTRACKS
+		OutputTo "TOTALTRACKS"
+		json_select "trackCount"
+		SayRest
+		
+		# ALBUM
+		OutputTo "ALBUM"
+		json_select "name"
+		SayRest
+		
+		# ALBUMARTIST
+		OutputTo "ALBUMARTIST"
+		json_select "artistName"
+		SayRest
+		
+		# DESCRIPTION / COMMENT
+		json_select_object "editorialNotes"
+		IfNot ""
+			OutputTo "DESCRIPTION"
+			json_select "short"
+			SayRest
+			OutputTo "COMMENT"
+			json_select "standard"
+			SayRest
+			json_unselect_object
+		EndIf
+			
+	json_unselect_object
+	
+	json_select_object "relationships"
+	
+		json_select_object "tracks"
+		IfNot ""
+			json_foreach "data"
+			
+			# ITUNESCATALOGID
+			OutputTo "ITUNESCATALOGID"
+			json_select "id"
+			SayRest
+			Say "|"
+
+			# HREF Link to more info of track
+			OutputTo "HREF"
+			json_select "href"
+			SayRest
+			Say "|"
+			
+			json_select_object "attributes"
+			
+				# GENRE
+				OutputTo "ITUNESCATALOGID"
+				json_select_array "genreNames" 1 ""
+				SayRest
+				Say "|"
+
+				# TRACK
+				OutputTo "TRACK"
+				json_select "trackNumber"
+				SayRest
+				Say "|"
+
+				# YEAR
+				OutputTo "YEAR"
+				json_select "releaseDate"
+				SayRest
+				Say "|"
+				
+				# _LENGTH
+				OutputTo "_LENGTH"
+				json_select "durationInMillis"
+				SayRest
+				Say "|"
+				
+				# ISRC
+				OutputTo "ISRC"
+				json_select "isrc"
+				SayRest
+				Say "|"
+				
+				# COMPOSER
+				OutputTo "COMPOSER"
+				json_select "composerName"
+				SayRest
+				Say "|"
+				
+				# DISCNUMBER
+				OutputTo "DISCNUMBER"
+				json_select "discNumber"
+				SayRest
+				Say "|"
+				
+				# TRACKS
+				OutputTo "TRACKS"
+				json_select "name"
+				SayRest
+				Say "|"
+				
+				# ARTIST
+				OutputTo "ARTIST"
+				json_select "artistName"
+				SayRest
+				Say "|"
+				
+				# ITUNESADVISORY
+				json_select "contentRating"
+				IfNot ""
+					Replace "notExplicit" "0"
+					Replace "explicit" "1"
+					Replace "cleaned" "2"
+					Replace "clean" "2"
+					SayRest
+				Else
+					Say "0"
+				EndIf
+				Say "|"
+			
+			json_unselect_object
+			
+			json_foreach_end
+			json_unselect_object
+		EndIf
+		
+	json_unselect_object
+
+json_foreach_end
+
+json "off"
