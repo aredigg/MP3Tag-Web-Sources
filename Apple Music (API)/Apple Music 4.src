@@ -1,4 +1,4 @@
-# Apple Music parser v4.00b1 for MP3Tag
+# Apple Music parser v4.00b2 for MP3Tag
 # © 2023 All Rights Reserved
 
 [Name]=Apple Music 4
@@ -26,6 +26,7 @@ json_select_object "results"
 				# %_url%
 				json_select "href"
 				SayRest
+				Say "?include%5Bsongs%5D=albums,credits,lyrics"
 				Say "|"
 				
 				# %_preview%
@@ -171,7 +172,17 @@ json_foreach "data"
 			SayRest
 			json_unselect_object
 		EndIf
-			
+		
+		# ALBUM URL
+		OutputTo "URL"
+		json_select "url"
+		SayRest
+
+		# CLASSICAL URL
+		OutputTo "CLASSICALURL"
+		json_select "classicalUrl"
+		SayRest
+	
 	json_unselect_object
 	
 	json_select_object "relationships"
@@ -195,7 +206,7 @@ json_foreach "data"
 			json_select_object "attributes"
 			
 				# GENRE
-				OutputTo "ITUNESCATALOGID"
+				OutputTo "GENRE"
 				json_select_array "genreNames" 1 ""
 				SayRest
 				Say "|"
@@ -229,7 +240,44 @@ json_foreach "data"
 				json_select "composerName"
 				SayRest
 				Say "|"
+
+				# ATTRIBUTION
+				OutputTo "ATTRIBUTION"
+				json_select "attribution"
+				SayRest
+				Say "|"
+
+				# WORK
+				OutputTo "WORK"
+				json_select "workName"
+				SayRest
 				
+				# SHOWMOVEMENT
+				OutputTo "SHOWMOVEMENT"
+				json_select "workName"
+				IfNot ""
+					Say "1"
+				EndIf
+				Say "|"
+
+				# MOVEMENT
+				OutputTo "MOVEMENT"
+				json_select "movementNumber"
+				SayRest
+				Say "|"
+
+				# MOVEMENTTOTAL
+				OutputTo "MOVEMENTTOTAL"
+				json_select "movementCount"
+				SayRest
+				Say "|"
+
+				# MOVEMENTNAME
+				OutputTo "MOVEMENTNAME"
+				json_select "movementName"
+				SayRest
+				Say "|"
+	
 				# DISCNUMBER
 				OutputTo "DISCNUMBER"
 				json_select "discNumber"
@@ -247,8 +295,15 @@ json_foreach "data"
 				json_select "artistName"
 				SayRest
 				Say "|"
-				
+
+				# AUDIO LANGUAGE
+				OutputTo "LANGUAGE"
+				json_select "audioLocale"
+				SayRest
+				Say "|"
+	
 				# ITUNESADVISORY
+				OutputTo "ITUNESADVISORY"
 				json_select "contentRating"
 				IfNot ""
 					Replace "notExplicit" "0"
@@ -260,6 +315,60 @@ json_foreach "data"
 					Say "0"
 				EndIf
 				Say "|"
+			
+			json_unselect_object
+			
+			json_select_object "relationships"
+			
+				json_select_object "credits"
+				IfNot ""
+					OutputTo "INVOLVEDPEOPLE"
+					json_foreach "data"
+						json_select_object "attributes"
+							# "performer"
+							json_select "kind"
+							# SayRest
+							# SayNewline
+							# "PERFORMING ARTISTS"
+							json_select "title"
+							SayRest
+							SayNewline
+						json_unselect_object
+						json_select_object "relationships"
+							json_select_object "credit-artists"
+								json_foreach "data"
+									json_select_object "attributes"
+										# Roles
+										json_select_array "roleNames" -1 ", "
+										SayRest
+										Say ": "
+										# Name
+										json_select "name"
+										SayRest
+										SayNewline
+									json_unselect_object
+								json_foreach_end
+							json_unselect_object
+						json_unselect_object
+						SayNewline
+					json_foreach_end
+					Say "|"
+				EndIf
+				json_unselect_object
+				
+				json_select_object "lyrics"
+				IfNot ""
+					OutputTo "UNSYNCEDLYRICS"
+					json_foreach "data"
+						json_select_object "attributes"
+							# TTML Lyrics
+							json_select "ttml"
+							SayRest
+						json_unselect_object
+					json_foreach_end
+					Say "|"
+				EndIf
+				json_unselect_object
 			
 			json_unselect_object
 			
