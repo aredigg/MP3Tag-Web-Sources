@@ -1,0 +1,276 @@
+# Apple TV parser v1.0a1 for MP3Tag
+# © 2023 All Rights Reserved
+
+[Name]=Apple TV Movies
+[BasedOn]=https://tv.apple.com/
+[IndexUrl]=https://uts-api.itunes.apple.com/uts/v3/search?caller=js&v=64&locale=auto&pfm=AppleTV&sf=143441&searchTerm=%s
+[AlbumUrl]=https://uts-api.itunes.apple.com/uts/v3/movies/
+[SearchBy]=Search for||[$if2(%TITLE%,%_filename%)]||%s
+[WordSeparator]=+
+[Encoding]=url-utf-8
+[IndexFormat]=%_url%|%_preview%|%_coverurl%|%Title%|%Genre%|%Date%
+[MinAppVersionMac]=1.8.4
+[MinAppVersionWin]=3.22
+
+[ParserScriptIndex]=...
+
+json "on"
+
+# debug "on" "debug-index.txt"
+
+json_select_object "data"
+	json_select_object "canvas"
+		json_foreach "shelves"
+			json_select "id"
+			If "uts.col.search.MV"
+				json_foreach "items"
+					# %_url%
+					json_select "id"
+					SayRest
+					Say "?caller=js&v=64&locale=auto&pfm=AppleTV&sf=143441"
+					Say "|"
+					# %_preview%
+					json_select "url"
+					SayRest
+					Say "|"
+					# %_coverurl%
+					json_select_object "images"
+						json_select_object "shelfImage"
+							json_select "url"
+							RegexpReplace "(.*)\/.*" "$1"
+							SayRest
+							Say "/128x72-50.jpg"
+						json_unselect_object
+					json_unselect_object
+					Say "|"
+					# %Title%
+					json_select "title"
+					SayRest
+					Say "|"
+					# %Genre%
+					json_select_many "genres" "name" "" "" 1
+					SayRest
+					Say "|"
+					# %Date%
+					json_select "releaseDate"
+					SayRest
+					SayNewline
+				json_foreach_end
+			EndIf
+		json_foreach_end
+	json_unselect_object
+json_unselect_object
+
+json "off"
+
+[ParserScriptAlbum]=...
+
+json "on"
+
+# debug "on" "debug-album.txt"
+
+json_select_object "data"
+	json_select_object "content"
+		# ITUNESMEDIATYPE
+		OutputTo "ITUNESMEDIATYPE"
+		Say "Movie"
+		# TITLE
+		OutputTo "TITLE"
+		json_select "title"
+		SayRest
+		# ARTIST
+		#OutputTo "ARTIST"
+		#json_select ""
+		#SayRest
+		# ID
+		OutputTo "ID"
+		json_select "id"
+		SayRest
+		# GENRE
+		OutputTo "GENRE"
+		json_select_many "genres" "name" "" "" 1
+		SayRest
+		# DESCRIPTION
+		OutputTo "DESCRIPTION"
+		json_select "description"
+		SayRest
+		# LONG DESCRIPTION
+		#OutputTo "PODCASTDESC"
+		#json_select "description"
+		#SayRest
+		# _LENGTH
+		OutputTo "_LENGTH"
+		json_select "duration"
+		SayRest
+		# RELEASEDATE
+		OutputTo "RELEASEDATE"
+		json_select "releaseDate"
+		SayRest
+		# COUNTRIES OF ORIGIN
+		OutputTo "COUNTRIES"
+		json_select_many "countriesOfOrigin" "countryCode" "," ""
+		SayRest
+		# SPOKEN LANGUAGES
+		OutputTo "LANGUAGES"
+		json_select_many "originalSpokenLanguages" "locale" "," ""
+		SayRest
+		# STUDIO
+		OutputTo "STUDIO"
+		json_select "studio"
+		SayRest
+		# ITUNESCATALOGID
+		#OutputTo "ITUNESCATALOGID"
+		#json_select ""
+		#SayRest
+		# ITUNESCOUNTRYID
+		#OutputTo "ITUNESCOUNTRYID"
+		#json_select ""
+		#SayRest
+		# iTunEXTC
+		json_select_object "rating"
+			OutputTo "iTunEXTC"
+			json_select "system"
+			SayRest
+			Say "$verticalBar()"
+			json_select "displayName"
+			SayRest
+			Say "$verticalBar()"
+			json_select "value"
+			SayRest
+			Say "$verticalBar()"
+		json_unselect_object
+		# COVERURL
+		OutputTo "COVERURL"
+		json_select_object "images"
+			json_select_object "posterArt"
+			IfNot ""
+				json_select "url"
+				RegexpReplace "(.*)\/.*" "$1"
+				SayRest
+				Say "/1280x720-50.jpg"
+				json_unselect_object
+			EndIf
+		json_unselect_object
+	json_unselect_object
+	
+	# iTunMOVI header
+	OutputTo "iTunMOVI"
+	Say "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+	Say "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">"
+	Say "<plist version=\"1.0\">"
+	Say "<dict>"
+	
+	# Studio
+	Say "<key>studio</key>"
+	Say "<string>"
+	SayOutput "STUDIO"
+	Say "</string>"
+	
+	json_select_object "canvas"
+		json_foreach "shelves"
+			json_select "id"
+			If "uts.col.CastAndCrew"
+				# TODO: Voice/Self/Guest star/Music/Creator/Performer/Host/Narrator
+				# CAST (TODO: localize)
+				Say "<key>cast</key>"
+				Say "<array>"
+				json_foreach "items"
+					json_select "roleTitle"
+					If "Actor"
+						Say "<dict>"
+							json_select "title"
+							Say "<key>name</key>"
+							Say "<string>"
+							SayRest
+							Say "</string>"
+							json_select "characterName"
+							Say "<key>actorof</key>"
+							Say "<string>"
+							SayRest
+							Say "</string>"
+						Say "</dict>"
+					EndIf
+				json_foreach_end
+				Say "</array>"
+				# DIRECTORS (TODO: localize)
+				Say "<key>directors</key>"
+				Say "<array>"
+				json_foreach "items"
+					json_select "roleTitle"
+					If "Director"
+						Say "<dict>"
+							json_select "title"
+							Say "<key>name</key>"
+							Say "<string>"
+							SayRest
+							Say "</string>"
+						Say "</dict>"
+					EndIf
+				json_foreach_end
+				Say "</array>"
+				# TODO: CO DIRECTORS (TODO: localize)
+				Say "<key>codirectors</key>"
+				Say "<array>"
+				json_foreach "items"
+					json_select "roleTitle"
+					If "Co Director"
+						Say "<dict>"
+							json_select "title"
+							Say "<key>name</key>"
+							Say "<string>"
+							SayRest
+							Say "</string>"
+						Say "</dict>"
+					EndIf
+				json_foreach_end
+				Say "</array>"
+				# PRODUCERS (TODO: localize)
+				Say "<key>producers</key>"
+				Say "<array>"
+				json_foreach "items"
+					json_select "roleTitle"
+					If "Producer"
+						Say "<dict>"
+							json_select "title"
+							Say "<key>name</key>"
+							Say "<string>"
+							SayRest
+							Say "</string>"
+						Say "</dict>"
+					EndIf
+					If "Executive Producer"
+						Say "<dict>"
+							json_select "title"
+							Say "<key>name</key>"
+							Say "<string>"
+							SayRest
+							Say "</string>"
+						Say "</dict>"
+					EndIf
+				json_foreach_end
+				Say "</array>"
+				# SCREEENWRITERS (TODO: localize)
+				Say "<key>screenwriters</key>"
+				Say "<array>"
+				json_foreach "items"
+					json_select "roleTitle"
+					If "Writer"
+						Say "<dict>"
+							json_select "title"
+							Say "<key>name</key>"
+							Say "<string>"
+							SayRest
+							Say "</string>"
+						Say "</dict>"
+					EndIf
+				json_foreach_end
+				Say "</array>"
+			EndIf
+		json_foreach_end
+	json_unselect_object
+	# iTunMOVI tail
+	Say "</dict>"
+	Say "</plist>"
+json_unselect_object
+
+json "off"
