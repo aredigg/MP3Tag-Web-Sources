@@ -1,0 +1,220 @@
+# Apple TV parser v1.0a2 for MP3Tag
+# © 2023 All Rights Reserved
+
+[Name]=Apple TV Shows
+[BasedOn]=https://tv.apple.com/
+[IndexUrl]=https://uts-api.itunes.apple.com/uts/v3/search?caller=js&v=64&locale=auto&pfm=AppleTV&sf=143441
+[AlbumUrl]=https://uts-api.itunes.apple.com/uts/v3/shows/
+[SearchBy]=Search for||[$if2(%TVSHOW%,[$if2($regexp(%_filename%,(.*)(S0*\d+\D*.*),$1,1),0)])]||&searchTerm=%s||Season||[$if2(%SEASON%,[$if2($regexp(%_filename%,(.*S0*)(\d+)(\D*.*),$2,1),0)])]||Season+%s||Episode||[$if2(%EPISODE%,[$if2($regexp(%_filename%,(.*E0*)(\d+)(\D*.*),$2,1),0)])]||+Episode+%s
+[WordSeparator]=+
+[Encoding]=url-utf-8
+[IndexFormat]=%_url%|%_preview%|%_coverurl%|%Title%|%Genre%|%Date%
+[MinAppVersionMac]=1.8.4
+[MinAppVersionWin]=3.22
+
+[ParserScriptIndex]=...
+
+# debug "on" "debug-index.txt"
+
+json "on"
+
+json_select_object "data"
+	json_select_object "canvas"
+		json_foreach "shelves"
+			json_select "id"
+			If "uts.col.search.SH"
+				json_foreach "items"
+					# %_url%
+					json_select "id"
+					SayRest
+					Say "/episodes?caller=js&v=64&locale=auto&pfm=AppleTV&sf=143441&nextToken=0:1000"
+					Say "|"
+					# %_preview%
+					json_select "url"
+					SayRest
+					Say "|"
+					# %_coverurl%
+					json_select_object "images"
+						json_select_object "shelfImage"
+							json_select "url"
+							RegexpReplace "(.*)\/.*" "$1"
+							SayRest
+							Say "/128x72-50.jpg"
+						json_unselect_object
+					json_unselect_object
+					Say "|"
+					# %Title%
+					json_select "title"
+					SayRest
+					Say "|"
+					# %Genre%
+					json_select_many "genres" "name" "" "" 1
+					SayRest
+					Say "|"
+					# %Date%
+					json_select "releaseDate"
+					SayRest
+					SayNewline
+				json_foreach_end
+			EndIf
+		json_foreach_end
+	json_unselect_object
+	OutputTo "SEASON"
+	json_select "searchTerm"
+	RegexpReplace ".*Season\s(\d+).*" "$1"
+	SayRest
+	OutputTo "EPISODE"
+	json_select "searchTerm"
+	RegexpReplace ".*Episode\s(\d+).*" "$1"
+	SayRest
+json_unselect_object
+
+json "off"
+
+[ParserScriptAlbum]=...
+
+json "on"
+
+#  debug "on" "debug-album.txt"
+
+json_select_object "data"
+	# TOTALTRACKS
+	OutputTo "TOTALTRACKS"
+	json_select "totalEpisodeCount"
+	SayRest
+	json_foreach "episodes"
+		# ITUNESMEDIATYPE
+		OutputTo "ITUNESMEDIATYPE"
+		Say "TV Show"
+		Say "|"
+		# TITLE
+		OutputTo "TITLE"
+		json_select "title"
+		SayRest
+		Say "|"
+		# TITLE
+		OutputTo "TRACKS"
+		json_select "title"
+		SayRest
+		Say "|"
+		# ID
+		OutputTo "ID"
+		json_select "id"
+		SayRest
+		Say "|"
+		# COPYRIGHT
+		OutputTo "COPYRIGHT"
+		json_select "copyright"
+		SayRest
+		Say "|"
+		# GENRE
+		OutputTo "GENRE"
+		json_select_many "genres" "name" "" "" 1
+		SayRest
+		Say "|"
+		# DESCRIPTION
+		OutputTo "DESCRIPTION"
+		json_select "description"
+		SayRest
+		Say "|"
+		# _LENGTH
+		OutputTo "_LENGTH"
+		json_select "duration"
+		SayRest
+		Say "|"
+		# TRACK
+		OutputTo "TRACK"
+		json_select "episodeIndex"
+		SayRest
+		Say "|"
+		# TVEPISODE
+		OutputTo "TVEPISODE"
+		json_select "episodeNumber"
+		SayRest
+		Say "|"
+		# FRACTIONALEPISODE
+		OutputTo "FRACTIONALEPISODE"
+		json_select "fractionalEpisodeNumber"
+		SayRest
+		Say "|"
+		# COVERURL
+		IfNotOutput "COVERURL"
+			OutputTo "COVERURL"
+			json_select_object "images"
+				json_select_object "showPosterArt"
+				IfNot ""
+					json_select "url"
+					RegexpReplace "(.*)\/.*" "$1"
+					SayRest
+					Say "/1920x1080-50.jpg"
+					json_unselect_object
+				EndIf
+			json_unselect_object
+		EndIf
+		# SPOKEN LANGUAGES
+		OutputTo "LANGUAGES"
+		json_select_many "originalSpokenLanguages" "locale" "," ""
+		SayRest
+		Say "|"
+		# iTunEXTC
+		OutputTo "iTunEXTC"
+		json_select_object "rating"
+			IfNot ""
+				json_select "system"
+				SayRest
+				Say "$verticalBar()"
+				json_select "displayName"
+				SayRest
+				Say "$verticalBar()"
+				json_select "value"
+				SayRest
+				Say "$verticalBar()"
+			EndIf
+		json_unselect_object
+		Say "|"
+		# RELEASEDATE
+		OutputTo "RELEASEDATE"
+		json_select "releaseDate"
+		SayRest
+		Say "|"
+		# TVSEASONID
+		OutputTo "TVSEASONID"
+		json_select "seasonId"
+		SayRest
+		Say "|"
+		# TVSEASON
+		OutputTo "TVSEASON"
+		json_select "seasonNumber"
+		SayRest
+		Say "|"
+		# TVSHOW
+		OutputTo "TVSHOW"
+		json_select "showTitle"
+		SayRest
+		Say "|"
+		# iTunMOVI
+		OutputTo "iTunMOVI"
+		json_select_object "rolesSummary"
+			Say "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+			Say "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">"
+			Say "<plist version=\"1.0\">"
+				# Cast
+				Say "<key>cast</key>"
+				Say "<array>"
+				Say "<dict>"
+					Say "<key>name</key>"
+					Say "<string>"
+					json_select_array "cast" -1 "</string><key>name</key><string>"
+					SayRest
+					Say "</string>"
+				Say "</dict>"
+				Say "</array>"
+			Say "<dict>"
+			Say "</dict>"
+			Say "</plist>"
+		json_unselect_object
+		Say "|"
+	json_foreach_end
+json_unselect_object
+
+json "off"
