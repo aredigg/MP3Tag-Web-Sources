@@ -1,0 +1,250 @@
+# YouTube parser v1.0a1 for MP3Tag
+# © 2023 All Rights Reserved
+
+[Name]=YouTube
+[BasedOn]=https://www.youtube.com/
+[IndexUrl]=https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=50&safeSearch=none&type=video&key=INSERT_YOUR_YOUTUBE_KEY_HERE&q=%s
+[AlbumUrl]=https://youtube.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&key=INSERT_YOUR_YOUTUBE_KEY_HERE&id=%s
+[SearchBy]=Search for||[$if2(%TITLE%,%_filename%)]||%s
+[WordSeparator]=+
+[Encoding]=url-utf-8
+[IndexFormat]=%_url%|%_preview%|%_coverurl%|%Title%|%Channel%|%Date%
+[MinAppVersionMac]=1.8.8
+[MinAppVersionWin]=3.22f
+
+[ParserScriptIndex]=...
+
+Replace "|" "$verticalBar()"
+
+json "on"
+Trim "on"
+
+# Debug "on" "debug-index.txt"
+
+json_foreach "items"
+	json_select_object "id"
+		json_select "kind"
+		If "youtube#video"
+			# %_url%
+			json_select "videoId"
+			SayRest
+			Say "|"
+			# %_preview%
+			json_select "videoId"
+			Say "https://www.youtube.com/watch?v="
+			SayRest
+			Say "|"
+		EndIf
+	json_unselect_object
+	json_select_object "snippet"
+		# %_coverurl%
+		json_select_object "thumbnails"
+			json_select_object "default"
+				json_select "url"
+				SayRest
+				Say "|"
+			json_unselect_object
+		json_unselect_object
+		# %Title%
+		json_select "title"
+		SayRest
+		Say "|"
+		# %Channel%
+		json_select "channelTitle"
+		SayRest
+		Say "|"
+		# %Date%
+		json_select "publishedAt"
+		SayNextNumber
+		SayNChars 1
+		SayNextNumber
+		SayNChars 1
+		SayNextNumber
+		SayNewline
+	json_unselect_object
+json_foreach_end
+
+json "off"
+
+[ParserScriptAlbum]=...
+
+Replace "|" "$verticalBar()"
+
+json "on"
+Trim "on"
+
+# Debug "on" "debug-album.txt"
+
+json_foreach "items"
+	# ID
+	OutputTo "ID"
+	json_select "id"
+	SayRest
+	Say "|"
+	json_select_object "snippet"
+		# publishedAt
+		OutputTo "YEAR"
+		json_select "publishedAt"
+		SayRest
+		Say "|"
+		# channelId
+		OutputTo "CHANNELID"
+		json_select "channelId"
+		RegexpReplace "UC(.*)" "UU$1"
+		SayRest
+		Say "|"
+		# title
+		OutputTo "TITLE"
+		json_select "title"
+		SayRest
+		Say "|"
+		# description
+		OutputTo "DESCRIPTION"
+		json_select "description"
+		SayRest
+		Say "|"
+		json_select_object "localized"
+			# localized title
+			#OutputTo "TITLE2"
+			#json_select "title"
+			#SayRest
+			#Say "|"
+			# localized description
+			#OutputTo "DESCRIPTION2"
+			#json_select "description"
+			#SayRest
+			#Say "|"
+		json_unselect_object
+		# thumbnails
+		IfNotOutput "COVERURL"
+			OutputTo "COVERURL"
+			json_select_object "thumbnails"
+				json_select_object "maxres"
+				IfNot ""
+					json_select "url"
+					SayRest
+					json_unselect_object
+				Else
+					json_select_object "standard"
+					IfNot ""
+						json_select "url"
+						SayRest
+						json_unselect_object
+					Else
+						json_select_object "high"
+						IfNot ""
+							json_select "url"
+							SayRest
+							json_unselect_object
+						Else
+							json_select_object "medium"
+							IfNot ""
+								json_select "url"
+								SayRest
+								json_unselect_object
+							Else
+								json_select_object "low"
+								IfNot ""
+									json_select "url"
+									SayRest
+									json_unselect_object
+								Else
+									json_select_object "default"
+										json_select "url"
+										SayRest
+									json_unselect_object
+								EndIf
+							EndIf
+						EndIf
+					EndIf
+				EndIf
+			json_unselect_object
+		EndIf
+		# channelTitle
+		OutputTo "ALBUM"
+		json_select "channelTitle"
+		SayRest
+		Say "|"
+		# tags
+		OutputTo "TAGS"
+		json_select_array "tags" -1 ","
+		SayRest
+		Say "|"
+		# categoryId
+		OutputTo "GENRE"
+		json_select "categoryId"
+		Replace "10" "Music"
+		Replace "15" "Pets & Animals"
+		Replace "17" "Sports"
+		Replace "18" "Short Movies"
+		Replace "19" "Travel & Events"
+		Replace "20" "Gaming"
+		Replace "21" "Videoblogging"
+		Replace "22" "People & Blogs"
+		Replace "23" "Comedy"
+		Replace "24" "Entertainment"
+		Replace "25" "News & Politics"
+		Replace "26" "Howto & Style"
+		Replace "27" "Education"
+		Replace "28" "Science & Technology"
+		Replace "29" "Nonprofits & Activism"
+		Replace "30" "Movies"
+		Replace "31" "Anime/Animation"
+		Replace "32" "Action/Adventure"
+		Replace "33" "Classics"
+		Replace "34" "Comedy"
+		Replace "35" "Documentary"
+		Replace "36" "Drama"
+		Replace "37" "Family"
+		Replace "38" "Foreign"
+		Replace "39" "Horror"
+		Replace "40" "Sci-Fi/Fantasy"
+		Replace "41" "Thriller"
+		Replace "42" "Shorts"
+		Replace "43" "Shows"
+		Replace "44" "Trailers"
+		Replace "2" "Autos & Vehicles"
+		Replace "1" "Film & Animation"
+		Replace "0" "Unknown"
+		SayRest
+		Say "|"
+		# liveBroadcastContent
+		OutputTo "LIVE"
+		json_select "liveBroadcastContent"
+		SayRest
+		Say "|"
+		# defaultLanguage
+		OutputTo "LANGUAGE"
+		json_select "defaultLanguage"
+		SayRest
+		Say "|"
+		# defaultAudioLanguage
+		OutputTo "AUDIOLANGUAGE"
+		json_select "defaultAudioLanguage"
+		SayRest
+		Say "|"
+	json_unselect_object
+	json_select_object "contentDetails"
+		# duration
+		OutputTo "DURATION"
+		json_select "duration"
+		SayRest
+		Say "|"
+		# dimension
+		# definition
+		# caption
+		# licensedContent
+		# contentRating
+		OutputTo "ITUNESADVISORY"
+		json_select_object "contentRating"
+			json_select "ytRating"
+			If "ytAgeRestricted"
+				Say "1"
+			EndIf
+		json_unselect_object
+		Say "|"
+		# projection
+	json_unselect_object
+json_foreach_end
+
+json "off"
