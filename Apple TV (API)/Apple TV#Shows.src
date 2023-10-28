@@ -1,4 +1,4 @@
-# Apple TV parser v1.0a2 for MP3Tag
+# Apple TV parser v1.0b1 for MP3Tag
 # © 2023 All Rights Reserved
 
 [Name]=Apple TV Shows
@@ -9,12 +9,12 @@
 [WordSeparator]=+
 [Encoding]=url-utf-8
 [IndexFormat]=%_url%|%_preview%|%_coverurl%|%Title%|%Genre%|%Date%
-[MinAppVersionMac]=1.8.4
-[MinAppVersionWin]=3.22
+[MinAppVersionMac]=1.8.8
+[MinAppVersionWin]=3.22f
 
 [ParserScriptIndex]=...
 
-# debug "on" "debug-index.txt"
+# Debug "on" "debug-index.txt"
 
 json "on"
 
@@ -53,7 +53,7 @@ json_select_object "data"
 					Say "|"
 					# %Date%
 					json_select "releaseDate"
-					SayRest
+					SayDate "ms"
 					SayNewline
 				json_foreach_end
 			EndIf
@@ -75,7 +75,7 @@ json "off"
 
 json "on"
 
-#  debug "on" "debug-album.txt"
+# Debug "on" "debug-album.txt"
 
 json_select_object "data"
 	# TOTALTRACKS
@@ -173,9 +173,9 @@ json_select_object "data"
 		json_unselect_object
 		Say "|"
 		# RELEASEDATE
-		OutputTo "RELEASEDATE"
+		OutputTo "YEAR"
 		json_select "releaseDate"
-		SayRest
+		SayDate "ms"
 		Say "|"
 		# TVSEASONID
 		OutputTo "TVSEASONID"
@@ -198,18 +198,18 @@ json_select_object "data"
 			Say "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 			Say "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">"
 			Say "<plist version=\"1.0\">"
+			Say "<dict>"
 				# Cast
 				Say "<key>cast</key>"
 				Say "<array>"
 				Say "<dict>"
 					Say "<key>name</key>"
 					Say "<string>"
-					json_select_array "cast" -1 "</string><key>name</key><string>"
+					json_select_array "cast" -1 "</string></dict><dict><key>name</key><string>"
 					SayRest
 					Say "</string>"
 				Say "</dict>"
 				Say "</array>"
-			Say "<dict>"
 			Say "</dict>"
 			Say "</plist>"
 		json_unselect_object

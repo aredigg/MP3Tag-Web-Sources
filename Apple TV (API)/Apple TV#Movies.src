@@ -1,4 +1,4 @@
-# Apple TV parser v1.0a2 for MP3Tag
+# Apple TV parser v1.0b1 for MP3Tag
 # © 2023 All Rights Reserved
 
 [Name]=Apple TV Movies
@@ -9,14 +9,14 @@
 [WordSeparator]=+
 [Encoding]=url-utf-8
 [IndexFormat]=%_url%|%_preview%|%_coverurl%|%Title%|%Genre%|%Date%
-[MinAppVersionMac]=1.8.4
-[MinAppVersionWin]=3.22
+[MinAppVersionMac]=1.8.8
+[MinAppVersionWin]=3.22f
 
 [ParserScriptIndex]=...
 
 json "on"
 
-# debug "on" "debug-index.txt"
+# Debug "on" "debug-index.txt"
 
 json_select_object "data"
 	json_select_object "canvas"
@@ -53,7 +53,7 @@ json_select_object "data"
 					Say "|"
 					# %Date%
 					json_select "releaseDate"
-					SayRest
+					SayDate "ms"
 					SayNewline
 				json_foreach_end
 			EndIf
@@ -78,10 +78,6 @@ json_select_object "data"
 		OutputTo "TITLE"
 		json_select "title"
 		SayRest
-		# ARTIST
-		#OutputTo "ARTIST"
-		#json_select ""
-		#SayRest
 		# ID
 		OutputTo "ID"
 		json_select "id"
@@ -94,18 +90,14 @@ json_select_object "data"
 		OutputTo "DESCRIPTION"
 		json_select "description"
 		SayRest
-		# LONG DESCRIPTION
-		#OutputTo "PODCASTDESC"
-		#json_select "description"
-		#SayRest
 		# _LENGTH
 		OutputTo "_LENGTH"
 		json_select "duration"
 		SayRest
 		# RELEASEDATE
-		OutputTo "RELEASEDATE"
+		OutputTo "YEAR"
 		json_select "releaseDate"
-		SayRest
+		SayDate "ms"
 		# COUNTRIES OF ORIGIN
 		OutputTo "COUNTRIES"
 		json_select_many "countriesOfOrigin" "countryCode" "," ""
@@ -118,14 +110,6 @@ json_select_object "data"
 		OutputTo "STUDIO"
 		json_select "studio"
 		SayRest
-		# ITUNESCATALOGID
-		#OutputTo "ITUNESCATALOGID"
-		#json_select ""
-		#SayRest
-		# ITUNESCOUNTRYID
-		#OutputTo "ITUNESCOUNTRYID"
-		#json_select ""
-		#SayRest
 		# iTunEXTC
 		json_select_object "rating"
 			OutputTo "iTunEXTC"
@@ -170,7 +154,7 @@ json_select_object "data"
 		json_foreach "shelves"
 			json_select "id"
 			If "uts.col.CastAndCrew"
-				# TODO: Voice/Self/Guest star/Music/Creator/Performer/Host/Narrator
+				# TODO: Music/Creator
 				# CAST (TODO: localize)
 				Say "<key>cast</key>"
 				Say "<array>"
@@ -190,6 +174,93 @@ json_select_object "data"
 							Say "</string>"
 						Say "</dict>"
 					EndIf
+					If "Self"
+						Say "<dict>"
+							json_select "title"
+							Say "<key>name</key>"
+							Say "<string>"
+							SayRest
+							Say "</string>"
+							json_select "characterName"
+							Say "<key>actorof</key>"
+							Say "<string>"
+							SayRest
+							Say "</string>"
+						Say "</dict>"
+					EndIf
+					If "Voice"
+						Say "<dict>"
+							json_select "title"
+							Say "<key>name</key>"
+							Say "<string>"
+							SayRest
+							Say "</string>"
+							json_select "characterName"
+							Say "<key>actorof</key>"
+							Say "<string>"
+							SayRest
+							Say "</string>"
+						Say "</dict>"
+					EndIf
+					If "Guest star"
+						Say "<dict>"
+							json_select "title"
+							Say "<key>name</key>"
+							Say "<string>"
+							SayRest
+							Say "</string>"
+							json_select "characterName"
+							Say "<key>actorof</key>"
+							Say "<string>"
+							SayRest
+							Say "</string>"
+						Say "</dict>"
+					EndIf
+					If "Performer"
+						Say "<dict>"
+							json_select "title"
+							Say "<key>name</key>"
+							Say "<string>"
+							SayRest
+							Say "</string>"
+							json_select "characterName"
+							Say "<key>actorof</key>"
+							Say "<string>"
+							SayRest
+							Say "</string>"
+						Say "</dict>"
+					EndIf
+					If "Host"
+						Say "<dict>"
+							json_select "title"
+							Say "<key>name</key>"
+							Say "<string>"
+							SayRest
+							Say "</string>"
+							json_select "characterName"
+							Say "<key>actorof</key>"
+							Say "<string>"
+							SayRest
+							Say "</string>"
+						Say "</dict>"
+					EndIf
+					If "Narrator"
+						Say "<dict>"
+							json_select "title"
+							Say "<key>name</key>"
+							Say "<string>"
+							SayRest
+							Say "</string>"
+							json_select "characterName"
+							Say "<key>actorof</key>"
+							Say "<string>"
+							SayRest
+							Say "</string>"
+						Say "</dict>"
+					EndIf
+					
+					
+					
 				json_foreach_end
 				Say "</array>"
 				# DIRECTORS (TODO: localize)
