@@ -1,9 +1,9 @@
-# Apple Music parser v4.00b2 for MP3Tag
+# Apple Music parser v4.00b3 for MP3Tag
 # © 2023 All Rights Reserved
 
 [Name]=Apple Music 4
 [BasedOn]=https://music.apple.com/
-[IndexUrl]=https://localhost:8084/v1/catalog/us/search?types=albums&limit=3&term=%s
+[IndexUrl]=https://localhost:8084/v1/catalog/us/search?types=albums&limit=10&term=%s
 [AlbumUrl]=https://localhost:8084
 [SearchBy]=Search for||[$if2([$if2(%ALBUMARTIST%,%ARTIST%)][ %ALBUM%],[%_directory%] [%_parent_directory%])]||%s
 [WordSeparator]=+
@@ -16,7 +16,7 @@
 
 json "on"
 
-# debug "on" "debug-index.txt"
+# Debug "on" "debug-index.txt"
 
 json_select_object "results"
 	json_select_object "albums"
@@ -108,7 +108,7 @@ json "off"
 
 json "on"
 
-# debug "on" "debug-album.txt"
+# Debug "on" "debug-album.txt"
 
 json_foreach "data"
 

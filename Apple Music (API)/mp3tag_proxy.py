@@ -1,12 +1,12 @@
 # Apple Music proxy for Apple Music Web Source 4.0 for MP3Tag
-# Version 1.0b2 © 2023
+# Version 1.0b3 © 2023
 # All Rights Reserved
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from ssl import wrap_socket
 import requests
 
-TOKEN = "Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IldlYlBsYXlLaWQifQ.eyJpc3MiOiJBTVBXZWJQbGF5IiwiaWF0IjoxNjkyNjM5MTM1LCJleHAiOjE2OTk4OTY3MzUsInJvb3RfaHR0cHNfb3JpZ2luIjpbImFwcGxlLmNvbSJdfQ.nJ_cqCk2lRPbzK7jxHXwu1aGaxGiMYa0px0DdAfI_9GcUuB5Ki_lKO6IfWEgxA5Dr9_KAh81ACpHkcgXjh8ArQ"
+TOKEN = "Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IldlYlBsYXlLaWQifQ.eyJpc3MiOiJBTVBXZWJQbGF5IiwiaWF0IjoxNjk5MzE4MTkyLCJleHAiOjE3MDY1NzU3OTIsInJvb3RfaHR0cHNfb3JpZ2luIjpbImFwcGxlLmNvbSJdfQ.LItASHBvVCCVOCzVg02rksnRPVa6M7YQVTW0yYuV5BKV6zKLNGlGPDN4n4kZVK7aAjrYSfMk6V-EJJcq12cd3Q"
 USER = ""
 URL = "https://amp-api.music.apple.com"
 PORT = 8084
@@ -52,5 +52,5 @@ class request_handler(BaseHTTPRequestHandler):
 		print("SPAM")
 
 server = HTTPServer(('', PORT), request_handler)
-server.socket = wrap_socket(server.socket, certfile="certificate.pem", keyfile="private-key.pem", server_side=True)
+server.socket = wrap_socket(server.socket, certfile="localhost.pem", keyfile="localhost.key", server_side=True)
 server.serve_forever()
