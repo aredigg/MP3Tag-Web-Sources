@@ -48,6 +48,21 @@
 		"description": "Select to add only the first genre.",
 		"default": false
 	},
+    {
+        "type": "string",
+        "key": "delimiter",
+        "title": "Delimiter for multiple values",
+        "description": "Choose the string to use as a delimiter.",
+		"choices": [
+			"\\\\",
+			", ",
+			";",
+			"/",
+			"|",
+			" "
+		],
+		"default": "\\\\"
+    },
 	{
 		"type": "separator",
 		"key": "searchListItems",
@@ -121,6 +136,11 @@
 				"title": "Nur einzelne Genres",
 				"description": "Wählen Sie, um nur das erste Genre hinzuzufügen."
 			},
+            {
+	            "key": "delimiter",
+	            "title": "Trennzeichen für mehrere Werte",
+	            "description": "Wählen Sie die Zeichenfolge, die als Trennzeichen verwendet werden soll.",
+	        },
 			{
 				"key": "searchListItems",
 				"title": "In der Suche enthaltene Elemente auswählen"
@@ -180,6 +200,11 @@
 					"title": "Solo un genere",
 					"description": "Seleziona per aggiungere solo il primo genere."
 			},
+            {
+                    "key": "delimiter",
+                    "title": "Separatore per valori multipli",
+                    "description": "Scegliere il delimitatore che si desidera utilizzare.",
+            },
 			{
 					"key": "searchListItems",
 					"title": "Seleziona elementi inclusi nella ricerca"
@@ -239,6 +264,11 @@
 					"title": "Un seul genre",
 					"description": "Sélectionnez pour ajouter uniquement le premier genre."
 			},
+            {
+                    "key": "delimiter",
+                    "title": "Séparateur pour les valeurs multiples",
+                    "description": "Choisissez ce que vous voulez utiliser comme délimiteur.",
+            },
 			{
 					"key": "searchListItems",
 					"title": "Sélectionner les éléments inclus dans la recherche"
@@ -298,6 +328,11 @@
 					"title": "Solo un género",
 					"description": "Selecciona para añadir solo el primer género."
 			},
+            {
+                    "key": "delimiter",
+                    "title": "Separador de valores múltiples",
+                    "description": "Elija qué utilizar como delimitador.",
+            },
 			{
 					"key": "searchListItems",
 					"title": "Seleccionar elementos incluidos en la búsqueda"
@@ -357,6 +392,11 @@
 					"title": "Bare én sjanger",
 					"description": "Merk for å legge til bare den første sjangeren."
 			},
+            {
+                    "key": "delimiter",
+                    "title": "Skilletegn for flere verdier",
+                    "description": "Velg det som skal brukes som skilletegn.",
+            },
 			{
 					"key": "searchListItems",
 					"title": "Velg elementer som skal inkluderes i søk"

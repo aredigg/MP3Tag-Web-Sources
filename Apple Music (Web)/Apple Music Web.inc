@@ -1,4 +1,4 @@
-# Apple Music parser v3.10 for MP3Tag
+# Apple Music parser v3.11 for MP3Tag
 # © 2021-2023 All Rights Reserved
 [Name]=Apple Music
 [BasedOn]=https://music.apple.com/
@@ -459,6 +459,28 @@ json "off"
 
 [ParserScriptAlbum]=...
 
+IfNotOutput "Delimiter"
+	OutputTo "Delimiter"
+	IfVar "delimiter" "\\\\"
+		Say "\\\\"
+	EndIf
+	IfVar "delimiter" ", "
+		Say ", "
+	EndIf
+	IfVar "delimiter" ";"
+		Say ";"
+	EndIf
+	IfVar "delimiter" "/"
+		Say "/"
+	EndIf
+	IfVar "delimiter" "|"
+		Say "$verticalBar()"
+	EndIf
+	IfVar "delimiter" " "
+		Say " "
+	EndIf
+EndIf
+
 FindLine "<script type=\"application/json\" id=\"serialized-server-data\">" 1 1
 RegexpReplace ".*<script type=\"application/json\" id=\"serialized-server-data\">\[(.*)\]<\/script>.*" "$1"
 
@@ -544,13 +566,12 @@ json_select_object "data"
 						IfOutput "SectionAlbum"
 
 							IfNotVar "naturalTitles" "true"
-
 								OutputTo "ALBUMARTIST"
 								IfOutput "ALBUMARTIST"
-									# Say "\\\\"
-									Say ", "
+									SayOutput "Delimiter"
 								EndIf
 								json_select "title"
+
 								Replace "Various Artists" ""
 								Replace "Varios Artistas" ""
 								Replace "Vários Artistas" ""
@@ -594,8 +615,7 @@ json_select_object "data"
 
 								OutputTo "ARTIST"
 								IfOutput "TEMP_ARTIST"
-									# Say "\\\\"
-									Say ", "
+									SayOutput "Delimiter"
 								EndIf
 								json_select "title"
 								SayRest
@@ -617,7 +637,7 @@ json_select_object "data"
 											IfOutput "SectionAlbum"
 												OutputTo "TEMP_ALBUMARTISTID"
 												IfOutput "TEMP_ALBUMARTISTID"
-													Say "\\\\"
+													SayOutput "Delimiter"
 												EndIf
 												json_select "storeAdamID"
 												SayRest
@@ -626,7 +646,7 @@ json_select_object "data"
 											IfOutput "SectionSong"
 												OutputTo "ITUNESARTISTID"
 												IfOutput "TEMP_ITUNESARTISTID"
-													Say "\\\\"
+													SayOutput "Delimiter"
 												EndIf
 												json_select "storeAdamID"
 												SayRest
@@ -682,6 +702,39 @@ json_select_object "data"
 					OutputTo "DESCRIPTION"
 					json_select "paragraphText"
 					SayRest
+					IfVar "naturalTitles" "true"
+						IfNotOutput "ALBUMARTIST"
+							OutputTo "ALBUMARTIST"
+							json_select "headerSubtitle"
+							Replace "Various Artists" ""
+							Replace "Varios Artistas" ""
+							Replace "Vários Artistas" ""
+							Replace "Vários intérpretes" ""
+							Replace "群星" ""
+							Replace "群星" ""
+							Replace "Eri Esittäjiä" ""
+							Replace "Multi-interprètes" ""
+							Replace "Verschiedene Interpreten" ""
+							Replace "Verschillende artiesten" ""
+							Replace "Artisti Vari" ""
+							Replace "ヴァリアス・アーティスト" ""
+							Replace "Diverse Artister" ""
+							Replace "Разные артисты" ""
+							Replace "Разные исполнители" ""
+							Replace "Διάφοροι καλλιτέχνες" ""
+							Replace "Blandade Artister" ""
+							Replace "אמנים שונים" ""
+							Replace "Çeşitli Sanatçılar" ""
+							Replace "مختلف الفنانين" ""
+							Replace "فنانون متنوعون" ""
+							Replace "فنانون متعددون" ""
+							Replace "Різні виконавці" ""
+							Replace "รวมศิลปิน" ""
+							Replace "Nhiều Nghệ Sĩ" ""
+							RegexpReplace "\s·\s\d*" ""
+							SayRest
+						EndIf
+					EndIf
 					json_unselect_object
 				EndIf
 				
@@ -877,11 +930,6 @@ json_select_object "data"
 						json_select "artistName"
 						SayRest
 						Say "|"
-
-						OutputTo "ALBUMARTIST"
-						json_select "containerArtistName"
-						SayRest
-						Say "|"
 					EndIf
 
 					Set "TOTALDISCS"
@@ -939,6 +987,21 @@ IfNot ""
 					Replace "\\\\Müzik" ""
 					Replace "\\\\Música" ""
 					Replace "\\\\Музика" ""
+					IfVar "delimiter" ", "
+						Replace "\\\\" ", "
+					EndIf
+					IfVar "delimiter" ";"
+						Replace "\\\\" ";"
+					EndIf
+					IfVar "delimiter" "/"
+						Replace "\\\\" "/"
+					EndIf
+					IfVar "delimiter" "|"
+						Replace "\\\\" "$verticalBar()"
+					EndIf
+					IfVar "delimiter" " "
+						Replace "\\\\" " "
+					EndIf
 				EndIf
 				SayRest
 				Say "|"
@@ -989,9 +1052,48 @@ IfNot ""
 			json_select_object "relationships"
 				json_select_object "composers"
 					json_select_many "data" "id" "\\\\"
+					IfVar "delimiter" ", "
+						Replace "\\\\" ", "
+					EndIf
+					IfVar "delimiter" ";"
+						Replace "\\\\" ";"
+					EndIf
+					IfVar "delimiter" "/"
+						Replace "\\\\" "/"
+					EndIf
+					IfVar "delimiter" "|"
+						Replace "\\\\" "$verticalBar()"
+					EndIf
+					IfVar "delimiter" " "
+						Replace "\\\\" " "
+					EndIf
 					SayRest
 				json_unselect_object
 			json_unselect_object
+			Say "|"
+
+			OutputTo "ITUNESFORMERIDS"
+			json_select_object "meta"
+			IfNot ""
+				json_select_array "formerIds" -1 "\\\\"
+					IfVar "delimiter" ", "
+						Replace "\\\\" ", "
+					EndIf
+					IfVar "delimiter" ";"
+						Replace "\\\\" ";"
+					EndIf
+					IfVar "delimiter" "/"
+						Replace "\\\\" "/"
+					EndIf
+					IfVar "delimiter" "|"
+						Replace "\\\\" "$verticalBar()"
+					EndIf
+					IfVar "delimiter" " "
+						Replace "\\\\" " "
+					EndIf
+					SayRest
+				json_unselect_object
+			EndIf
 			Say "|"
 
 		json_foreach_end
@@ -1128,9 +1230,11 @@ json_unselect_object
 
 # Cleanup
 Set "TEMP_ALBUMARTISTID"
+Set "Delimiter"
 
 IfOutput "NoDataFound"
 	Set "Output"
 EndIf
 
 json "off"
+								
