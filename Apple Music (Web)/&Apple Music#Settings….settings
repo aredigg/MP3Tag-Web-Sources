@@ -139,7 +139,7 @@
             {
 	            "key": "delimiter",
 	            "title": "Trennzeichen für mehrere Werte",
-	            "description": "Wählen Sie die Zeichenfolge, die als Trennzeichen verwendet werden soll.",
+	            "description": "Wählen Sie die Zeichenfolge, die als Trennzeichen verwendet werden soll."
 	        },
 			{
 				"key": "searchListItems",
@@ -203,7 +203,7 @@
             {
                     "key": "delimiter",
                     "title": "Separatore per valori multipli",
-                    "description": "Scegliere il delimitatore che si desidera utilizzare.",
+                    "description": "Scegliere il delimitatore che si desidera utilizzare."
             },
 			{
 					"key": "searchListItems",
@@ -267,7 +267,7 @@
             {
                     "key": "delimiter",
                     "title": "Séparateur pour les valeurs multiples",
-                    "description": "Choisissez ce que vous voulez utiliser comme délimiteur.",
+                    "description": "Choisissez ce que vous voulez utiliser comme délimiteur."
             },
 			{
 					"key": "searchListItems",
@@ -331,7 +331,7 @@
             {
                     "key": "delimiter",
                     "title": "Separador de valores múltiples",
-                    "description": "Elija qué utilizar como delimitador.",
+                    "description": "Elija qué utilizar como delimitador."
             },
 			{
 					"key": "searchListItems",
@@ -395,7 +395,7 @@
             {
                     "key": "delimiter",
                     "title": "Skilletegn for flere verdier",
-                    "description": "Velg det som skal brukes som skilletegn.",
+                    "description": "Velg det som skal brukes som skilletegn."
             },
 			{
 					"key": "searchListItems",
