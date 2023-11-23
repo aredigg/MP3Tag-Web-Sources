@@ -1,4 +1,4 @@
-# Apple Music parser v3.11 for MP3Tag
+# Apple Music parser v3.13 for MP3Tag
 # © 2021-2023 All Rights Reserved
 [Name]=Apple Music
 [BasedOn]=https://music.apple.com/
@@ -515,12 +515,14 @@ json_select_object "data"
 					If "album"
 						Set "SectionAlbum" "True"
 						
-						IfNotOutput "ITUNESALBUMID"
-							OutputTo "ITUNESALBUMID"
-							json_select_object "identifiers"
-								json_select "storeAdamID"
-								SayNextNumber
-							json_unselect_object
+						IfNotVar "skipiTunesTags" "true"
+							IfNotOutput "ITUNESALBUMID"
+								OutputTo "ITUNESALBUMID"
+								json_select_object "identifiers"
+									json_select "storeAdamID"
+									SayNextNumber
+								json_unselect_object
+							EndIf
 						EndIf
 	
 					EndIf
@@ -528,32 +530,40 @@ json_select_object "data"
 					If "song"
 						Set "SectionSong" "True"
 					
-						OutputTo "ITUNESMEDIATYPE"
-						Say "Normal"
-						Say "|"
+						IfNotVar "skipiTunesTags" "true"
+							OutputTo "ITUNESMEDIATYPE"
+							Say "Normal"
+							Say "|"
+						EndIf
 
-						OutputTo "ITUNESCATALOGID"
-						json_select_object "identifiers"
-							json_select "storeAdamID"
-							SayNextNumber
-						json_unselect_object
-						Say "|"
+						IfNotVar "skipiTunesTags" "true"
+							OutputTo "ITUNESCATALOGID"
+							json_select_object "identifiers"
+								json_select "storeAdamID"
+								SayNextNumber
+							json_unselect_object
+							Say "|"
+						EndIf
 					
 					EndIf
 
 					If "musicVideo"
 						Set "SectionSong" "True"
 					
-						OutputTo "ITUNESMEDIATYPE"
-						Say "Music Video"
-						Say "|"
+						IfNotVar "skipiTunesTags" "true"
+							OutputTo "ITUNESMEDIATYPE"
+							Say "Music Video"
+							Say "|"
+						EndIf
 					
-						OutputTo "ITUNESCATALOGID"
-						json_select_object "identifiers"
-							json_select "storeAdamID"
-							SayNextNumber
-						json_unselect_object
-						Say "|"
+						IfNotVar "skipiTunesTags" "true"
+							OutputTo "ITUNESCATALOGID"
+							json_select_object "identifiers"
+								json_select "storeAdamID"
+								SayNextNumber
+							json_unselect_object
+							Say "|"
+						EndIf
 					
 					EndIf
 					
@@ -597,7 +607,10 @@ json_select_object "data"
 								Replace "Різні виконавці" ""
 								Replace "รวมศิลปิน" ""
 								Replace "Nhiều Nghệ Sĩ" ""
-								SayRest
+								IfNot ""
+									json_select "title"
+									SayRest
+								EndIf
 
 								IfVar "addSortTitles" "true"
 									Set "ALBUMARTISTSORT"
@@ -644,13 +657,15 @@ json_select_object "data"
 											EndIf
 											
 											IfOutput "SectionSong"
-												OutputTo "ITUNESARTISTID"
-												IfOutput "TEMP_ITUNESARTISTID"
-													SayOutput "Delimiter"
+												IfNotVar "skipiTunesTags" "true"
+													OutputTo "ITUNESARTISTID"
+													IfOutput "TEMP_ITUNESARTISTID"
+														SayOutput "Delimiter"
+													EndIf
+													json_select "storeAdamID"
+													SayRest
+													Set "TEMP_ITUNESARTISTID" "True"
 												EndIf
-												json_select "storeAdamID"
-												SayRest
-												Set "TEMP_ITUNESARTISTID" "True"
 											EndIf
 											
 										json_unselect_object
@@ -677,9 +692,11 @@ json_select_object "data"
 								SayOutput "ALBUMARTIST"
 								Say "|"
 							EndIf
-							OutputTo "ITUNESARTISTID"
-							SayOutput "TEMP_ALBUMARTISTID"
-							Say "|"
+							IfNotVar "skipiTunesTags" "true"
+								OutputTo "ITUNESARTISTID"
+								SayOutput "TEMP_ALBUMARTISTID"
+								Say "|"
+							EndIf
 						EndIf
 
 					EndIf
@@ -690,11 +707,13 @@ json_select_object "data"
 					Set "TEMP_ARTIST"
 					OutputTo "ARTIST"
 					Say "|"
-				EndIF
+				EndIf
 				IfOutput "TEMP_ITUNESARTISTID"
 					Set "TEMP_ITUNESARTISTID"
-					OutputTo "ITUNESARTISTID"
-					Say "|"
+					IfNotVar "skipiTunesTags" "true"
+						OutputTo "ITUNESARTISTID"
+						Say "|"
+					EndIf
 				EndIF
 
 				json_select_object "modalPresentationDescriptor"
@@ -732,7 +751,16 @@ json_select_object "data"
 							Replace "รวมศิลปิน" ""
 							Replace "Nhiều Nghệ Sĩ" ""
 							RegexpReplace "\s·\s\d*" ""
-							SayRest
+							IfNot ""
+								json_select "headerSubtitle"
+								RegexpReplace "\s·\s\d*" ""
+								SayRest
+							EndIf
+						EndIf
+						IfVar "addSortTitles" "true"
+							Set "ALBUMARTISTSORT"
+							OutputTo "ALBUMARTISTSORT"
+							SayOutput "ALBUMARTIST"
 						EndIf
 					EndIf
 					json_unselect_object
@@ -841,9 +869,11 @@ json_select_object "data"
 												json_select "kind"
 												If "recordLabel"
 													json_select_object "identifiers"
-														OutputTo "ITUNESPUBLISHERID"
-														json_select "storeAdamID"
-														SayNextNumber
+														IfNotVar "skipiTunesTags" "true"
+															OutputTo "ITUNESPUBLISHERID"
+															json_select "storeAdamID"
+															SayNextNumber
+														EndIf
 														OutputTo "PUBLISHER"
 														SayOutput "TEMP_LINKSECTION"
 													json_unselect_object
@@ -1033,68 +1063,74 @@ IfNot ""
 				SayNextNumber
 				Say "|"
 				
-				OutputTo "ITUNESADVISORY"
-				json_select "contentRating"
-				IfNot ""
-					Replace "notExplicit" "0"
-					Replace "explicit" "1"
-					Replace "cleaned" "2"
-					Replace "clean" "2"
-					SayRest
-				Else
-					Say "0"
+				IfNotVar "skipiTunesTags" "true"
+					OutputTo "ITUNESADVISORY"
+					json_select "contentRating"
+					IfNot ""
+						Replace "notExplicit" "0"
+						Replace "explicit" "1"
+						Replace "cleaned" "2"
+						Replace "clean" "2"
+						SayRest
+					Else
+						Say "0"
+					EndIf
+					Say "|"
 				EndIf
-				Say "|"
 
 			json_unselect_object
 	
-			OutputTo "ITUNESCOMPOSERID"
-			json_select_object "relationships"
-				json_select_object "composers"
-					json_select_many "data" "id" "\\\\"
-					IfVar "delimiter" ", "
-						Replace "\\\\" ", "
-					EndIf
-					IfVar "delimiter" ";"
-						Replace "\\\\" ";"
-					EndIf
-					IfVar "delimiter" "/"
-						Replace "\\\\" "/"
-					EndIf
-					IfVar "delimiter" "|"
-						Replace "\\\\" "$verticalBar()"
-					EndIf
-					IfVar "delimiter" " "
-						Replace "\\\\" " "
-					EndIf
-					SayRest
+			IfNotVar "skipiTunesTags" "true"
+				OutputTo "ITUNESCOMPOSERID"
+				json_select_object "relationships"
+					json_select_object "composers"
+						json_select_many "data" "id" "\\\\"
+						IfVar "delimiter" ", "
+							Replace "\\\\" ", "
+						EndIf
+						IfVar "delimiter" ";"
+							Replace "\\\\" ";"
+						EndIf
+						IfVar "delimiter" "/"
+							Replace "\\\\" "/"
+						EndIf
+						IfVar "delimiter" "|"
+							Replace "\\\\" "$verticalBar()"
+						EndIf
+						IfVar "delimiter" " "
+							Replace "\\\\" " "
+						EndIf
+						SayRest
+					json_unselect_object
 				json_unselect_object
-			json_unselect_object
-			Say "|"
-
-			OutputTo "ITUNESFORMERIDS"
-			json_select_object "meta"
-			IfNot ""
-				json_select_array "formerIds" -1 "\\\\"
-					IfVar "delimiter" ", "
-						Replace "\\\\" ", "
-					EndIf
-					IfVar "delimiter" ";"
-						Replace "\\\\" ";"
-					EndIf
-					IfVar "delimiter" "/"
-						Replace "\\\\" "/"
-					EndIf
-					IfVar "delimiter" "|"
-						Replace "\\\\" "$verticalBar()"
-					EndIf
-					IfVar "delimiter" " "
-						Replace "\\\\" " "
-					EndIf
-					SayRest
-				json_unselect_object
+				Say "|"
 			EndIf
-			Say "|"
+
+			IfNotVar "skipiTunesTags" "true"
+				OutputTo "ITUNESFORMERIDS"
+				json_select_object "meta"
+				IfNot ""
+					json_select_array "formerIds" -1 "\\\\"
+						IfVar "delimiter" ", "
+							Replace "\\\\" ", "
+						EndIf
+						IfVar "delimiter" ";"
+							Replace "\\\\" ";"
+						EndIf
+						IfVar "delimiter" "/"
+							Replace "\\\\" "/"
+						EndIf
+						IfVar "delimiter" "|"
+							Replace "\\\\" "$verticalBar()"
+						EndIf
+						IfVar "delimiter" " "
+							Replace "\\\\" " "
+						EndIf
+						SayRest
+					json_unselect_object
+				EndIf
+				Say "|"
+			EndIf
 
 		json_foreach_end
 		
@@ -1218,11 +1254,13 @@ json_select_object "intent"
 			Replace "vn" "143471" # vi
 			Replace "za" "143472"
 			Replace "zw" "143605"
-			OutputTo "ITUNESCOUNTRYID"
-			SayNextNumber
-			json_select "language"
-			OutputTo "ITUNESLANGUAGEID"
-			SayRest
+			IfNotVar "skipiTunesTags" "true"
+				OutputTo "ITUNESCOUNTRYID"
+				SayNextNumber
+				json_select "language"
+				OutputTo "ITUNESLANGUAGEID"
+				SayRest
+			EndIf
 		json_unselect_object
 	json_unselect_object
 	EndIf
