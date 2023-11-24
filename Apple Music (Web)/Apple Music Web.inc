@@ -1,4 +1,4 @@
-# Apple Music parser v3.13 for MP3Tag
+# Apple Music parser v3.14 for MP3Tag
 # © 2021-2023 All Rights Reserved
 [Name]=Apple Music
 [BasedOn]=https://music.apple.com/
@@ -753,7 +753,7 @@ json_select_object "data"
 							RegexpReplace "\s·\s\d*" ""
 							IfNot ""
 								json_select "headerSubtitle"
-								RegexpReplace "\s·\s\d*" ""
+								RegexpReplace "\s·\s.*$" ""
 								SayRest
 							EndIf
 						EndIf
@@ -1017,6 +1017,7 @@ IfNot ""
 					Replace "\\\\Müzik" ""
 					Replace "\\\\Música" ""
 					Replace "\\\\Музика" ""
+					Replace "\\\\ミュージック" ""
 					IfVar "delimiter" ", "
 						Replace "\\\\" ", "
 					EndIf
