@@ -1,4 +1,4 @@
-# Apple Music parser v3.14 for MP3Tag
+# Apple Music parser v3.15 for MP3Tag
 # © 2021-2023 All Rights Reserved
 [Name]=Apple Music
 [BasedOn]=https://music.apple.com/
