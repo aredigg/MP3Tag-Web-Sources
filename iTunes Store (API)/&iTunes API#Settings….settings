@@ -1,0 +1,113 @@
+{
+    "key": "itunes api",
+    "title": "iTunes API Settings",
+    "settings": [
+        {
+            "type": "string",
+            "key": "coverartSize",
+            "title": "Size of the cover art",
+            "description": "Select the size and quality of the cover art to embed.",
+            "choices": [
+                "600 pixels - 50 %",
+                "600 pixels - 90 %",
+                "1200 pixels - 50 %",
+                "1200 pixels - 90 %",
+                "2400 pixels - 50 %",
+                "2400 pixels - 90 %",
+                "3600 pixels - 50 %",
+                "3600 pixels - 90 %",
+                "Original quality"
+            ],
+            "default": "1200 pixels - 50 %"
+        },
+        {
+            "type": "bool",
+            "key": "uncensoredTitles",
+            "title": "Prefer uncensored album and artist titles",
+            "description": "Unselect for censored titles.",
+            "default": true
+        }
+    ],
+    "localizations": {
+        "de": [
+            {
+                "key": "itunes api",
+                "title": "iTunes API Einstellungen"
+            },
+            {
+                "key": "coverartSize",
+                "title": "Größe des Covers",
+                "description": "Wählen Sie die Größe und Qualität des einzubettenden Covers."
+            },
+            {
+                "key": "uncensoredTitles",
+                "title": "Bevorzuge unzensierte Album- und Künstlertitel",
+                "description": "Abwählen für zensierte Titel."
+            }
+        ],
+        "it": [
+            {
+                "key": "itunes api",
+                "title": "iTunes API Einstellungen"
+            },
+            {
+                "key": "coverartSize",
+                "title": "Dimensione della copertina",
+                "description": "Seleziona la dimensione e la qualità della copertina da incorporare."
+            },
+            {
+                "key": "uncensoredTitles",
+                "title": "Preferire i titoli di album e artisti non censurati",
+                "description": "Deselezionare per i titoli censurati."
+            }
+        ],
+        "fr": [
+            {
+                "key": "itunes api",
+                "title": "iTunes API Einstellungen"
+            },
+            {
+                "key": "coverartSize",
+                "title": "Taille de la pochette",
+                "description": "Sélectionnez la taille et la qualité de la pochette à intégrer."
+            },
+            {
+                "key": "uncensoredTitles",
+                "title": "Préférer les titres d'albums et d'artistes non censurés.",
+                "description": "Désélectionner pour les titres censurés."
+            }
+        ],
+        "es": [
+            {
+                "key": "itunes api",
+                "title": "iTunes API Einstellungen"
+            },
+            {
+                "key": "coverartSize",
+                "title": "Tamaño de la portada",
+                "description": "Selecciona el tamaño y la calidad de la portada para incrustar."
+            },
+            {
+                "key": "uncensoredTitles",
+                "title": "Preferir títulos de álbumes y artistas sin censura",
+                "description": "No seleccionar para títulos censurados."
+            }
+        ],
+        "no": [
+            {
+                "key": "itunes api",
+                "title": "iTunes API Einstellungen"
+            },
+            {
+                "key": "coverartSize",
+                "title": "Størrelse på omslagsbildet",
+                "description": "Velg størrelse og kvalitet på omslagsbildet."
+            },
+            {
+                "key": "uncensoredTitles",
+                "title": "Foretrekk usensurerte album- og artisttitler",
+                "description": "Fjern for sensurerte titler."
+            }
+        ]
+    }
+}

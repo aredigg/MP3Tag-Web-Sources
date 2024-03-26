@@ -1,0 +1,4 @@
+[IndexUrl]=https://itunes.apple.com/search?media=music&entity=album&limit=200&country=in&lang=en_us
+[AlbumUrl]=https://itunes.apple.com/lookup?entity=song&limit=200&country=in&lang=en_us&id=
+[SearchBy]=Search for||[$if2([$if2(%ALBUMARTIST%,%ARTIST%)][ %ALBUM%],[%_directory%] [%_parent_directory%])]||&term=%s
+[Include]=iTunes API v2.inc
