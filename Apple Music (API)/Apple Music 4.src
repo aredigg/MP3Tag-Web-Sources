@@ -1,5 +1,5 @@
-# Apple Music parser v4.00b3 for MP3Tag
-# © 2023 All Rights Reserved
+# Apple Music parser v4.00b4 for MP3Tag
+# © 2023-2024 All Rights Reserved
 
 [Name]=Apple Music 4
 [BasedOn]=https://music.apple.com/
@@ -22,20 +22,20 @@ json_select_object "results"
 	json_select_object "albums"
 		IfNot ""
 			json_foreach "data"
-			
+
 				# %_url%
 				json_select "href"
 				SayRest
 				Say "?include%5Bsongs%5D=albums,credits,lyrics"
 				Say "|"
-				
+
 				# %_preview%
 				json_select "href"
 				SayRest
 				Say "|"
-				
+
 				json_select_object "attributes"
-				
+
 					# %_coverurl%
 					json_select_object "artwork"
 					IfNot ""
@@ -46,7 +46,7 @@ json_select_object "results"
 						json_unselect_object
 					EndIf
 					Say "|"
-					
+
 					# %Title%
 					json_select "name"
 					SayRest
@@ -56,27 +56,27 @@ json_select_object "results"
 					json_select "artistName"
 					SayRest
 					Say "|"
-					
+
 					# %Genre%
 					json_select_array "genreNames" 1 ""
 					SayRest
 					Say "|"
-					
+
 					# %Label%
 					json_select "recordLabel"
 					SayRest
 					Say "|"
-					
+
 					# %Tracks%
 					json_select "trackCount"
 					SayRest
 					Say "|"
-					
+
 					# %Date%
 					json_select "releaseDate"
 					SayRest
 					Say "|"
-					
+
 					# %Rating%
 					json_select "contentRating"
 					SayRest
@@ -86,17 +86,17 @@ json_select_object "results"
 					json_select "upc"
 					SayRest
 					Say "|"
-					
+
 					# %ID%
 					json_select_object "playParams"
 						json_select "id"
 						SayRest
 					json_unselect_object
-					
+
 				json_unselect_object
-				
+
 				SayNewline
-				
+
 			json_foreach_end
 		EndIf
 	json_unselect_object
@@ -115,20 +115,20 @@ json_foreach "data"
 	# ITUNESALBUMID
 	OutputTo "ITUNESALBUMID"
 	json_select "id"
-	SayRest	
-	
+	SayRest
+
 	json_select_object "attributes"
-		
+
 		# COPYRIGHT
 		OutputTo "COPYRIGHT"
 		json_select "copyright"
 		SayRest
-		
+
 		# UPC
 		OutputTo "UPC"
 		json_select "upc"
 		SayRest
-		
+
 		# COVERURL
 		OutputTo "COVERURL"
 		json_select_object "artwork"
@@ -150,17 +150,17 @@ json_foreach "data"
 		OutputTo "TOTALTRACKS"
 		json_select "trackCount"
 		SayRest
-		
+
 		# ALBUM
 		OutputTo "ALBUM"
 		json_select "name"
 		SayRest
-		
+
 		# ALBUMARTIST
 		OutputTo "ALBUMARTIST"
 		json_select "artistName"
 		SayRest
-		
+
 		# DESCRIPTION / COMMENT
 		json_select_object "editorialNotes"
 		IfNot ""
@@ -172,7 +172,7 @@ json_foreach "data"
 			SayRest
 			json_unselect_object
 		EndIf
-		
+
 		# ALBUM URL
 		OutputTo "URL"
 		json_select "url"
@@ -182,15 +182,15 @@ json_foreach "data"
 		OutputTo "CLASSICALURL"
 		json_select "classicalUrl"
 		SayRest
-	
+
 	json_unselect_object
-	
+
 	json_select_object "relationships"
-	
+
 		json_select_object "tracks"
 		IfNot ""
 			json_foreach "data"
-			
+
 			# ITUNESCATALOGID
 			OutputTo "ITUNESCATALOGID"
 			json_select "id"
@@ -202,9 +202,9 @@ json_foreach "data"
 			json_select "href"
 			SayRest
 			Say "|"
-			
+
 			json_select_object "attributes"
-			
+
 				# GENRE
 				OutputTo "GENRE"
 				json_select_array "genreNames" 1 ""
@@ -222,19 +222,19 @@ json_foreach "data"
 				json_select "releaseDate"
 				SayRest
 				Say "|"
-				
+
 				# _LENGTH
 				OutputTo "_LENGTH"
 				json_select "durationInMillis"
 				SayRest
 				Say "|"
-				
+
 				# ISRC
 				OutputTo "ISRC"
 				json_select "isrc"
 				SayRest
 				Say "|"
-				
+
 				# COMPOSER
 				OutputTo "COMPOSER"
 				json_select "composerName"
@@ -251,7 +251,7 @@ json_foreach "data"
 				OutputTo "WORK"
 				json_select "workName"
 				SayRest
-				
+
 				# SHOWMOVEMENT
 				OutputTo "SHOWMOVEMENT"
 				json_select "workName"
@@ -277,19 +277,19 @@ json_foreach "data"
 				json_select "movementName"
 				SayRest
 				Say "|"
-	
+
 				# DISCNUMBER
 				OutputTo "DISCNUMBER"
 				json_select "discNumber"
 				SayRest
 				Say "|"
-				
+
 				# TRACKS
 				OutputTo "TRACKS"
 				json_select "name"
 				SayRest
 				Say "|"
-				
+
 				# ARTIST
 				OutputTo "ARTIST"
 				json_select "artistName"
@@ -301,7 +301,7 @@ json_foreach "data"
 				json_select "audioLocale"
 				SayRest
 				Say "|"
-	
+
 				# ITUNESADVISORY
 				OutputTo "ITUNESADVISORY"
 				json_select "contentRating"
@@ -315,11 +315,11 @@ json_foreach "data"
 					Say "0"
 				EndIf
 				Say "|"
-			
+
 			json_unselect_object
-			
+
 			json_select_object "relationships"
-			
+
 				json_select_object "credits"
 				IfNot ""
 					OutputTo "INVOLVEDPEOPLE"
@@ -355,7 +355,7 @@ json_foreach "data"
 					Say "|"
 				EndIf
 				json_unselect_object
-				
+
 				json_select_object "lyrics"
 				IfNot ""
 					OutputTo "UNSYNCEDLYRICS"
@@ -369,13 +369,13 @@ json_foreach "data"
 					Say "|"
 				EndIf
 				json_unselect_object
-			
+
 			json_unselect_object
-			
+
 			json_foreach_end
 			json_unselect_object
 		EndIf
-		
+
 	json_unselect_object
 
 json_foreach_end

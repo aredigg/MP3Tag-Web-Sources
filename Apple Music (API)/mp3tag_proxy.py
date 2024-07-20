@@ -1,17 +1,29 @@
 # Apple Music proxy for Apple Music Web Source 4.0 for MP3Tag
-# Version 1.0b3 © 2023
+# Version 1.0b4 © 2023-2024
 # All Rights Reserved
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from ssl import wrap_socket
 import requests
+import re
 
-TOKEN = "Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IldlYlBsYXlLaWQifQ.eyJpc3MiOiJBTVBXZWJQbGF5IiwiaWF0IjoxNjk5MzE4MTkyLCJleHAiOjE3MDY1NzU3OTIsInJvb3RfaHR0cHNfb3JpZ2luIjpbImFwcGxlLmNvbSJdfQ.LItASHBvVCCVOCzVg02rksnRPVa6M7YQVTW0yYuV5BKV6zKLNGlGPDN4n4kZVK7aAjrYSfMk6V-EJJcq12cd3Q"
+TOKEN = ""
 USER = ""
 URL = "https://amp-api.music.apple.com"
 PORT = 8084
 
 session = requests.Session()
+
+if TOKEN == "":
+    url = "https://beta.music.apple.com/"
+    response = session.get(f"{url}").text
+    match = re.search(r"/(assets/index-legacy-[^/]+\.js)", response)
+    if match:
+        legacy_js = match.group(1)
+        response = session.get(f"{url}{legacy_js}").text
+        match = re.search('(?=eyJh)(.*?)(?=")', response)
+        if match:
+            TOKEN = "Bearer " + match.group(1)
 
 session.headers.update(
 		{
@@ -41,13 +53,13 @@ class request_handler(BaseHTTPRequestHandler):
 			self.send_header('Content-type', 'application/json')
 		self.end_headers()
 		self.wfile.write(response.content)
-		
+
 	def do_HEAD(self):
 		print("HEAD")
-		
+
 	def do_POST(self):
 		print("POST")
-		
+
 	def do_SPAM(self):
 		print("SPAM")
 
