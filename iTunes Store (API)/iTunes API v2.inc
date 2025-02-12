@@ -1,5 +1,5 @@
-# iTunes API 2.0
-# © 2021-2024 All Rights Reserved
+# iTunes API 2.1
+# © 2021-2025 All Rights Reserved
 [Name]=iTunes
 [BasedOn]=https://itunes.apple.com/
 [WordSeparator]=+
@@ -72,7 +72,7 @@ json_foreach "results"
             SayRest
             Say "|"
             json_select "releaseDate"
-            SayNChars 10            
+            SayNChars 10
             Say "|"
             json_select "primaryGenreName"
             SayRest
@@ -89,6 +89,139 @@ json_foreach "results"
             SayNewline
         EndIf
     EndIf
+    IfVar "includeTracks" "true"
+        If "track"
+            json_select "kind"
+            If "song"
+                json_select "collectionId"
+                SayNextNumber
+                Say "|"
+                json_select "collectionViewUrl"
+                Replace "?uo=4" ""
+                Replace "&uo=4" ""
+                SayRest
+                Say "|"
+                json_select "artworkUrl100"
+                SayRest
+                Say "|"
+                json_select "trackName"
+                If ""
+                    json_select "trackCensoredName"
+                EndIf
+                SayRest
+                Say " ("
+                json_select "collectionName"
+                If ""
+                    json_select "collectionCensoredName"
+                EndIf
+                OutputTo "TEMP"
+                SayRegexp "\s-\sSingle"
+                IfOutput "TEMP"
+                    Set "KIND" "Track (Single)"
+                    Set "TEMP"
+                EndIf
+                SayRegexp "\s-\sEP"
+                IfOutput "TEMP"
+                    Set "KIND" "Track (EP)"
+                    Set "TEMP"
+                EndIf
+                OutputTo "Output"
+                Replace " - Single" ""
+                Replace " - EP" ""
+                RegexpReplace "\[.*\]" ""
+                RegexpReplace "\{.*\}" ""
+                SayRest
+                Say ")|"
+                json_select "artistName"
+                SayRest
+                Say "|"
+                json_select "trackCount"
+                SayNextNumber
+                Say "|"
+                json_select "collectionType"
+                IfOutput "KIND"
+                    SayOutput "KIND"
+                    Set "KIND"
+                Else
+                    Say "Track "
+                    SayRest
+                EndIf
+                Say "|"
+                json_select "trackExplicitness"
+                Replace "notExplicit" "No"
+                Replace "explicit" "Yes"
+                Replace "cleaned" "Cleaned"
+                SayRest
+                Say "|"
+                json_select "releaseDate"
+                SayNChars 10
+                Say "|"
+                json_select "primaryGenreName"
+                SayRest
+                Say "|"
+                json_select "copyright"
+                SayRest
+                Say "|"
+                json_select "collectionName"
+                SayRegexp "(?<=\()[^)]*(?=\))"
+                Say " "
+                SayRegexp "(?<=\[)[^)]*(?=\])"
+                Say " "
+                SayRegexp "(?<=\{)[^}]*(?=\})"
+                SayNewline
+            EndIf
+            If "music-video"
+                json_select "trackId"
+                SayNextNumber
+                Say "|"
+                json_select "trackViewUrl"
+                Replace "?uo=4" ""
+                Replace "&uo=4" ""
+                SayRest
+                Say "|"
+                json_select "artworkUrl100"
+                SayRest
+                Say "|"
+                json_select "trackName"
+                If ""
+                    json_select "trackCensoredName"
+                EndIf
+                SayRest
+                Say "|"
+                json_select "artistName"
+                SayRest
+                Say "|"
+                json_select "trackCount"
+                SayNextNumber
+                Say "|"
+                Say "Music video"
+                Say "|"
+                json_select "trackExplicitness"
+                Replace "notExplicit" "No"
+                Replace "explicit" "Yes"
+                Replace "cleaned" "Cleaned"
+                SayRest
+                Say "|"
+                json_select "releaseDate"
+                SayNChars 10
+                Say "|"
+                json_select "primaryGenreName"
+                SayRest
+                Say "|"
+                json_select "copyright"
+                SayRest
+                Say "|"
+                json_select "collectionName"
+                SayRegexp "(?<=\()[^)]*(?=\))"
+                Say " "
+                SayRegexp "(?<=\[)[^)]*(?=\])"
+                Say " "
+                SayRegexp "(?<=\{)[^}]*(?=\})"
+                SayNewline
+            EndIf
+        EndIf
+    EndIf
+
 json_foreach_end
 
 json "off"
@@ -286,7 +419,7 @@ json_foreach "results"
 
         OutputTo "TRACKYEAR"
         json_select "releaseDate"
-        SayRest     
+        SayRest
         Say "|"
 
         OutputTo "TOTALDISCS"

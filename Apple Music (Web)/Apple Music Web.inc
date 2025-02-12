@@ -1,5 +1,5 @@
-# Apple Music parser v3.15 for MP3Tag
-# © 2021-2023 All Rights Reserved
+# Apple Music parser v3.16 for MP3Tag
+# © 2021-2025 All Rights Reserved
 [Name]=Apple Music
 [BasedOn]=https://music.apple.com/
 [WordSeparator]=%20
@@ -65,123 +65,123 @@ IfNotOutput "FoundWebURL"
 					json_foreach "items"
 						json_select_object "contentDescriptor"
 							json_select "kind"
-							
+
 							# Primary
 							IfVar "listAlbums" "true"
 								If "album"
 									Set "FoundAlbum" "True"
-									
+
 									# %_url%
 									json_select "url"
 									SayRest
 									Say "|"
-									
+
 									# %_preview%
 									json_select "url"
 									SayRest
 									Say "|"
-								
+
 								EndIf
 							EndIf
 							IfVar "listSongs" "true"
 								If "song"
 									Set "FoundSong" "True"
-								
+
 									# %_url%
 									json_select "url"
 									SayRest
 									Say "|"
-								
+
 									# %_preview%
 									json_select "url"
 									SayRest
 									Say "|"
-								
+
 								EndIf
 							EndIf
 							IfVar "listMusicVideos" "true"
 								If "musicVideo"
 									Set "FoundMusicVideo" "True"
-								
+
 									# %_url%
 									json_select "url"
 									SayRest
 									Say "|"
-								
+
 									# %_preview%
 									json_select "url"
 									SayRest
 									Say "|"
-								
+
 								EndIf
 							EndIf
 							IfVar "listExtraVideos" "true"
 								If "artistUploadedVideo"
 									Set "FoundExtraVideo" "True"
-								
+
 									# %_url%
 									json_select "url"
 									SayRest
 									Say "|"
-								
+
 									# %_preview%
 									json_select "url"
 									SayRest
 									Say "|"
-								
+
 								EndIf
 							EndIf
 							IfVar "listPlaylists" "true"
 								If "playlist"
 									Set "FoundPlaylist" "True"
-								
+
 									# %_url%
 									json_select "url"
 									SayRest
 									Say "|"
-								
+
 									# %_preview%
 									json_select "url"
 									SayRest
 									Say "|"
-								
+
 								EndIf
 							EndIf
 							IfVar "listRadioStations" "true"
 								If "radioStation"
 									Set "FoundRadioStation" "True"
-								
+
 									# %_url%
 									json_select "url"
 									SayRest
 									Say "|"
-								
+
 									# %_preview%
 									json_select "url"
 									SayRest
 									Say "|"
-								
+
 								EndIf
 								If "appleCurator"
 									Set "FoundRadioStation" "True"
-								
+
 									# %_url%
 									json_select "url"
 									SayRest
 									Say "|"
-								
+
 									# %_preview%
 									json_select "url"
 									SayRest
 									Say "|"
-								
+
 								EndIf
 							EndIf
 						json_unselect_object
-						
+
 						# Secondary
 						IfOutput "FoundAlbum"
-						
+
 							# %_coverurl%
 							json_select_object "artwork"
 							IfNot ""
@@ -194,38 +194,38 @@ IfNotOutput "FoundWebURL"
 								json_unselect_object
 							EndIf
 							Say "|"
-						
+
 							# %Title%
 							json_select_many "titleLinks" "title" " / "
 							SayRest
 							Say "|"
-						
+
 							# %Artist%
 							json_select_many "subtitleLinks" "title" ", "
 							SayRest
 							Say "|"
-							
+
 							# %Tracks%
 							json_select "trackCount"
 							SayNextNumber
 							Say "|"
-							
+
 							# %Kind%
 							Say "Album"
 							Say "|"
-							
+
 							# %Explicit%
 							json_select "showExplicitBadge"
 							If "1"
 								Say "Yes"
 							EndIf
-							
+
 							SayNewline
 							Set "FoundAlbum"
-							
+
 						EndIf
 						IfOutput "FoundSong"
-						
+
 							# %_coverurl%
 							json_select_object "artwork"
 							IfNot ""
@@ -238,37 +238,37 @@ IfNotOutput "FoundWebURL"
 								json_unselect_object
 							EndIf
 							Say "|"
-		
+
 							# %Title%
 							json_select "title"
 							SayRest
 							Say "|"
-						
+
 							# %Artist%
 							json_select_many "subtitleLinks" "title" ", "
 							SayRest
 							Say "|"
-							
+
 							# %Tracks%
 							json_select "trackCount"
 							Say "|"
-							
+
 							# %Kind%
 							Say "Song (Album)"
 							Say "|"
-		
+
 							# %Explicit%
 							json_select "showExplicitBadge"
 							If "1"
 								Say "Yes"
 							EndIf
-							
+
 							SayNewline
 							Set "FoundSong"
-							
+
 						EndIf
 						IfOutput "FoundMusicVideo"
-						
+
 							# %_coverurl%
 							json_select_object "artwork"
 							IfNot ""
@@ -281,37 +281,37 @@ IfNotOutput "FoundWebURL"
 								json_unselect_object
 							EndIf
 							Say "|"
-		
+
 							# %Title%
 							json_select_many "titleLinks" "title" " / "
 							SayRest
 							Say "|"
-						
+
 							# %Artist%
 							json_select_many "subtitleLinks" "title" ", "
 							SayRest
 							Say "|"
-							
+
 							# %Tracks%
 							json_select "trackCount"
 							Say "|"
-							
+
 							# %Kind%
 							Say "Music Video"
 							Say "|"
-		
+
 							# %Explicit%
 							json_select "showExplicitBadge"
 							If "1"
 								Say "Yes"
 							EndIf
-							
+
 							SayNewline
 							Set "FoundMusicVideo"
-							
+
 						EndIf
 						IfOutput "FoundExtraVideo"
-						
+
 							# %_coverurl%
 							json_select_object "artwork"
 							IfNot ""
@@ -324,37 +324,37 @@ IfNotOutput "FoundWebURL"
 								json_unselect_object
 							EndIf
 							Say "|"
-		
+
 							# %Title%
 							json_select_many "titleLinks" "title" " / "
 							SayRest
 							Say "|"
-						
+
 							# %Artist%
 							json_select_many "subtitleLinks" "title" ", "
 							SayRest
 							Say "|"
-							
+
 							# %Tracks%
 							json_select "trackCount"
 							Say "|"
-							
+
 							# %Kind%
 							Say "Video"
 							Say "|"
-		
+
 							# %Explicit%
 							json_select "showExplicitBadge"
 							If "1"
 								Say "Yes"
 							EndIf
-							
+
 							SayNewline
 							Set "FoundExtraVideo"
-							
+
 						EndIf
 						IfOutput "FoundPlaylist"
-						
+
 							# %_coverurl%
 							json_select_object "artwork"
 							IfNot ""
@@ -367,37 +367,37 @@ IfNotOutput "FoundWebURL"
 								json_unselect_object
 							EndIf
 							Say "|"
-		
+
 							# %Title%
 							json_select_many "titleLinks" "title" " / "
 							SayRest
 							Say "|"
-						
+
 							# %Artist%
 							json_select_many "subtitleLinks" "title" ", "
 							SayRest
 							Say "|"
-							
+
 							# %Tracks%
 							json_select "trackCount"
 							Say "|"
-							
+
 							# %Kind%
 							Say "Playlist"
 							Say "|"
-		
+
 							# %Explicit%
 							json_select "showExplicitBadge"
 							If "1"
 								Say "Yes"
 							EndIf
-							
+
 							SayNewline
 							Set "FoundPlaylist"
-							
+
 						EndIf
 						IfOutput "FoundRadioStation"
-						
+
 							# %_coverurl%
 							json_select_object "artwork"
 							IfNot ""
@@ -410,34 +410,34 @@ IfNotOutput "FoundWebURL"
 								json_unselect_object
 							EndIf
 							Say "|"
-		
+
 							# %Title%
 							json_select_many "titleLinks" "title" " / "
 							SayRest
 							Say "|"
-						
+
 							# %Artist%
 							json_select_many "subtitleLinks" "title" ", "
 							SayRest
 							Say "|"
-							
+
 							# %Tracks%
 							json_select "trackCount"
 							Say "|"
-							
+
 							# %Kind%
 							Say "Radio Station"
 							Say "|"
-		
+
 							# %Explicit%
 							json_select "showExplicitBadge"
 							If "1"
 								Say "Yes"
 							EndIf
-							
+
 							SayNewline
 							Set "FoundRadioStation"
-							
+
 						EndIf
 					json_foreach_end
 				EndIf
@@ -491,7 +491,7 @@ json "on" "current"
 json_select_object "data"
 	IfNot ""
 	json_foreach "sections"
-	
+
 		json_select "itemKind"
 		If "containerDetailHeaderLockup"
 			Set "ValidSection" "True"
@@ -505,16 +505,16 @@ json_select_object "data"
 		If "tvMovieDetailHeaderLockup"
 			Set "ValidSection" "True"
 		EndIf
-		
+
 		IfOutput "ValidSection"
 			json_foreach "items"
 				# Primary
 				json_select_object "contentDescriptor"
 					json_select "kind"
-					
+
 					If "album"
 						Set "SectionAlbum" "True"
-						
+
 						IfNotVar "skipiTunesTags" "true"
 							IfNotOutput "ITUNESALBUMID"
 								OutputTo "ITUNESALBUMID"
@@ -524,12 +524,12 @@ json_select_object "data"
 								json_unselect_object
 							EndIf
 						EndIf
-	
+
 					EndIf
-					
+
 					If "song"
 						Set "SectionSong" "True"
-					
+
 						IfNotVar "skipiTunesTags" "true"
 							OutputTo "ITUNESMEDIATYPE"
 							Say "Normal"
@@ -544,18 +544,18 @@ json_select_object "data"
 							json_unselect_object
 							Say "|"
 						EndIf
-					
+
 					EndIf
 
 					If "musicVideo"
 						Set "SectionSong" "True"
-					
+
 						IfNotVar "skipiTunesTags" "true"
 							OutputTo "ITUNESMEDIATYPE"
 							Say "Music Video"
 							Say "|"
 						EndIf
-					
+
 						IfNotVar "skipiTunesTags" "true"
 							OutputTo "ITUNESCATALOGID"
 							json_select_object "identifiers"
@@ -564,15 +564,15 @@ json_select_object "data"
 							json_unselect_object
 							Say "|"
 						EndIf
-					
+
 					EndIf
-					
+
 				json_unselect_object
-				
+
 				# Secondary
 				json_foreach "subtitleLinks"
 					IfNot "0"
-					
+
 						IfOutput "SectionAlbum"
 
 							IfNotVar "naturalTitles" "true"
@@ -619,11 +619,11 @@ json_select_object "data"
 								EndIf
 
 							EndIf
-							
+
 						EndIf
-						
+
 						IfOutput "SectionSong"
-							
+
 							IfNotVar "naturalTitles" "true"
 
 								OutputTo "ARTIST"
@@ -655,7 +655,7 @@ json_select_object "data"
 												json_select "storeAdamID"
 												SayRest
 											EndIf
-											
+
 											IfOutput "SectionSong"
 												IfNotVar "skipiTunesTags" "true"
 													OutputTo "ITUNESARTISTID"
@@ -667,7 +667,7 @@ json_select_object "data"
 													Set "TEMP_ITUNESARTISTID" "True"
 												EndIf
 											EndIf
-											
+
 										json_unselect_object
 									EndIf
 
@@ -675,16 +675,16 @@ json_select_object "data"
 							json_unselect_object
 						json_unselect_object
 						Else
-						
+
 							IfOutput "SectionAlbum"
 								OutputTo "COMPILATION"
 								Say "1"
 							EndIf
-							
+
 						EndIf
-						
+
 					Else
-						
+
 						IfOutput "SectionSong"
 
 							IfNotVar "naturalTitles" "true"
@@ -701,7 +701,7 @@ json_select_object "data"
 
 					EndIf
 				json_foreach_end
-				
+
 				# Cleanup
 				IfOutput "TEMP_ARTIST"
 					Set "TEMP_ARTIST"
@@ -765,7 +765,7 @@ json_select_object "data"
 					EndIf
 					json_unselect_object
 				EndIf
-				
+
 				OutputTo "COVERURL"
 				json_select_object "artwork"
 				IfNot ""
@@ -805,11 +805,11 @@ json_select_object "data"
 						json_unselect_object
 					json_unselect_object
 				EndIf
-				
-								
+
+
 				# Third
 				IfOutput "SectionAlbum"
-				
+
 					OutputTo "ALBUM"
 					json_select "title"
 					IfNotVar "originalTitles" "true"
@@ -822,8 +822,8 @@ json_select_object "data"
 						json_select "title"
 					EndIf
 					SayRest
-					
-					
+
+
 					IfNotVar "originalTitles" "true"
 						OutputTo "CONTENTGROUP"
 						json_select "title"
@@ -833,17 +833,17 @@ json_select_object "data"
 						EndIf
 						SayRegexp "(?<=\[)[^)]*(?=\])"
 					EndIf
-					
+
 					IfVar "addSortTitles" "true"
 						OutputTo "ALBUMSORT"
 						json_select "title"
 						SayRest
 					EndIf
-					
+
 					OutputTo "TOTALTRACKS"
 					json_select "trackCount"
 					SayNextNumber
-					
+
 					OutputTo "COPYRIGHT"
 					json_select "description"
 					IfNot ""
@@ -887,16 +887,16 @@ json_select_object "data"
 						EndIf
 						json_unselect_object
 					EndIf
-					
-				EndIf			
-	
+
+				EndIf
+
 				IfOutput "SectionSong"
-				
+
 					OutputTo "TRACKS"
 					json_select "title"
 					SayRest
 					Say "|"
-					
+
 					OutputTo "TRACK"
 					json_select "trackNumber"
 					SayNextNumber
@@ -906,7 +906,7 @@ json_select_object "data"
 					json_select "duration"
 					SayNextNumber
 					Say "|"
-					
+
 					OutputTo "TITLE"
 					json_select "title"
 					IfNotVar "originalTitles" "true"
@@ -914,7 +914,7 @@ json_select_object "data"
 						RegexpReplace "\[.*\]" ""
 						If ""
 							Set "Skip_Comment" "True"
-							json_select "title"		
+							json_select "title"
 							SayRegexp "(?<=\()[^)]*(?=\))"
 						Else
 							SayRest
@@ -923,7 +923,7 @@ json_select_object "data"
 						SayRest
 					EndIf
 					Say "|"
-					
+
 					IfNotVar "originalTitles" "true"
 						OutputTo "COMMENT"
 						IfNotOutput "Skip_Comment"
@@ -937,14 +937,14 @@ json_select_object "data"
 						EndIf
 						Say "|"
 					EndIf
-					
+
 					IfVar "addSortTitles" "true"
 						OutputTo "TITLESORT"
 						json_select "title"
 						SayRest
 						Say "|"
 					EndIf
-					
+
 					OutputTo "COMPOSER"
 					json_select "composer"
 					SayRest
@@ -966,12 +966,12 @@ json_select_object "data"
 					OutputTo "TOTALDISCS"
 					json_select "discNumber"
 					SayNextNumber
-				
+
 				EndIf
 
 				Set "SectionAlbum"
 				Set "SectionSong"
-	
+
 			json_foreach_end
 		EndIf
 		Set "ValidSection"
@@ -984,14 +984,15 @@ json_unselect_object
 json_select_object "data"
 IfNot ""
 	json_select_object "seoData"
-		
+
 		OutputTo "YEAR"
 		json_select "musicReleaseDate"
-		SayRest
+		SayNChars 10
+		Say "T09:00:00Z"
 
 		json_foreach "ogSongs"
 			json_select_object "attributes"
-			
+
 				OutputTo "ISRC"
 				json_select "isrc"
 				SayRest
@@ -1048,22 +1049,22 @@ IfNot ""
 				json_select "workName"
 				SayRest
 				Say "|"
-				
+
 				OutputTo "MOVEMENTNAME"
 				json_select "movementName"
 				SayRest
 				Say "|"
-				
+
 				OutputTo "MOVEMENT"
 				json_select "movementNumber"
 				SayNextNumber
 				Say "|"
-				
+
 				OutputTo "MOVEMENTTOTAL"
 				json_select "movementCount"
 				SayNextNumber
 				Say "|"
-				
+
 				IfNotVar "skipiTunesTags" "true"
 					OutputTo "ITUNESADVISORY"
 					json_select "contentRating"
@@ -1080,7 +1081,7 @@ IfNot ""
 				EndIf
 
 			json_unselect_object
-	
+
 			IfNotVar "skipiTunesTags" "true"
 				OutputTo "ITUNESCOMPOSERID"
 				json_select_object "relationships"
@@ -1134,7 +1135,7 @@ IfNot ""
 			EndIf
 
 		json_foreach_end
-		
+
 	json_unselect_object
 	EndIf
 json_unselect_object
@@ -1276,4 +1277,3 @@ IfOutput "NoDataFound"
 EndIf
 
 json "off"
-								

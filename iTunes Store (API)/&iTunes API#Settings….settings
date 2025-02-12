@@ -26,6 +26,13 @@
             "title": "Prefer uncensored album and artist titles",
             "description": "Unselect for censored titles.",
             "default": true
+        },
+        {
+            "type": "bool",
+            "key": "includeTracks",
+            "title": "Include single tracks in search",
+            "description": "Select to also be able to search for single tracks.",
+            "default": false
         }
     ],
     "localizations": {
@@ -43,6 +50,11 @@
                 "key": "uncensoredTitles",
                 "title": "Bevorzuge unzensierte Album- und Künstlertitel",
                 "description": "Abwählen für zensierte Titel."
+            },
+            {
+                "key": "includeTracks",
+                "title": "Einzelne Titel in die Suche einbeziehen",
+                "description": "Wählen Sie aus, dass Sie auch nach einzelnen Musiktiteln suchen können."
             }
         ],
         "it": [
@@ -59,6 +71,11 @@
                 "key": "uncensoredTitles",
                 "title": "Preferire i titoli di album e artisti non censurati",
                 "description": "Deselezionare per i titoli censurati."
+            },
+            {
+                "key": "includeTracks",
+                "title": "Includere i singoli brani nella ricerca",
+                "description": "Selezionare per poter cercare anche singoli brani musicali."
             }
         ],
         "fr": [
@@ -75,6 +92,11 @@
                 "key": "uncensoredTitles",
                 "title": "Préférer les titres d'albums et d'artistes non censurés.",
                 "description": "Désélectionner pour les titres censurés."
+            },
+            {
+                "key": "includeTracks",
+                "title": "Inclure les pistes uniques dans la recherche",
+                "description": "électionnez cette option pour pouvoir également rechercher des morceaux de musique individuels."
             }
         ],
         "es": [
@@ -91,6 +113,11 @@
                 "key": "uncensoredTitles",
                 "title": "Preferir títulos de álbumes y artistas sin censura",
                 "description": "No seleccionar para títulos censurados."
+            },
+            {
+                "key": "includeTracks",
+                "title": "Incluir canciones sueltas en la búsqueda",
+                "description": "Seleccione para poder buscar también pistas musicales sueltas."
             }
         ],
         "no": [
@@ -107,6 +134,11 @@
                 "key": "uncensoredTitles",
                 "title": "Foretrekk usensurerte album- og artisttitler",
                 "description": "Fjern for sensurerte titler."
+            },
+            {
+                "key": "includeTracks",
+                "title": "Inkluder enkeltspor i søket",
+                "description": "Velg for å inkludere enkeltsanger"
             }
         ]
     }
