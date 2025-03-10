@@ -1,4 +1,4 @@
-# Apple Music parser v3.16 for MP3Tag
+# Apple Music parser v3.17 for MP3Tag
 # © 2021-2025 All Rights Reserved
 [Name]=Apple Music
 [BasedOn]=https://music.apple.com/
@@ -480,6 +480,54 @@ IfNotOutput "Delimiter"
 		Say " "
 	EndIf
 EndIf
+
+FindLine "<script id=schema:music-album type="application/ld+json\">" 1 1
+MoveLine 1 1
+
+json "on" "current"
+
+json_select "datePublished"
+OutputTo "YEAR"
+IfNot ""
+    SayNChars 10
+    Say "T09:00:00Z"
+EndIf
+
+OutputTo "GENRE"
+IfVar "singleGenre" "true"
+	json_select_array "genre" 1 ""
+Else
+	json_select_array "genre" -1 "\\\\"
+	Replace "\\\\Musica" ""
+	Replace "\\\\Music" ""
+	Replace "\\\\Musiikki" ""
+	Replace "\\\\Musikk" ""
+	Replace "\\\\Musik" ""
+	Replace "\\\\Musique" ""
+	Replace "\\\\Muzyka" ""
+	Replace "\\\\Müzik" ""
+	Replace "\\\\Música" ""
+	Replace "\\\\Музика" ""
+	Replace "\\\\ミュージック" ""
+	IfVar "delimiter" ", "
+		Replace "\\\\" ", "
+	EndIf
+	IfVar "delimiter" ";"
+		Replace "\\\\" ";"
+	EndIf
+	IfVar "delimiter" "/"
+		Replace "\\\\" "/"
+	EndIf
+	IfVar "delimiter" "|"
+		Replace "\\\\" "$verticalBar()"
+	EndIf
+	IfVar "delimiter" " "
+		Replace "\\\\" " "
+	EndIf
+EndIf
+SayRest
+
+json "off"
 
 FindLine "<script type=\"application/json\" id=\"serialized-server-data\">" 1 1
 RegexpReplace ".*<script type=\"application/json\" id=\"serialized-server-data\">\[(.*)\]<\/script>.*" "$1"
@@ -987,8 +1035,10 @@ IfNot ""
 
 		OutputTo "YEAR"
 		json_select "musicReleaseDate"
-		SayNChars 10
-		Say "T09:00:00Z"
+		IfNot ""
+		    SayNChars 10
+		    Say "T09:00:00Z"
+		EndIf
 
 		json_foreach "ogSongs"
 			json_select_object "attributes"

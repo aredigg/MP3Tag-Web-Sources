@@ -1,4 +1,4 @@
-# iTunes API 2.1
+# iTunes API 2.2
 # © 2021-2025 All Rights Reserved
 [Name]=iTunes
 [BasedOn]=https://itunes.apple.com/
@@ -271,13 +271,13 @@ json_foreach "results"
             Replace "Nhiều Nghệ Sĩ" ""
             SayRest
 
-            OutputTo "ALBUM"
-            IfVar "uncensoredTitles" "true"
-                json_select "collectionName"
-            Else
-                json_select "collectionCensoredName"
-            EndIf
-            SayRest
+#            OutputTo "ALBUM"
+#            IfVar "uncensoredTitles" "true"
+#                json_select "collectionName"
+#            Else
+#                json_select "collectionCensoredName"
+#            EndIf
+#            SayRest
 
             OutputTo "ALBUMARTISTURL"
             json_select "artistViewUrl"
@@ -355,6 +355,15 @@ json_foreach "results"
         EndIf
     EndIf
     If "track"
+
+        OutputTo "ALBUM"
+        IfVar "uncensoredTitles" "true"
+            json_select "collectionName"
+        Else
+            json_select "collectionCensoredName"
+        EndIf
+        SayRest
+        Say "|"
 
         OutputTo "ITUNESARTISTID"
         json_select "artistId"
