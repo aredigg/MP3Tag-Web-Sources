@@ -1,4 +1,4 @@
-# Apple Music parser v3.17 for MP3Tag
+# Apple Music parser v3.18 for MP3Tag
 # © 2021-2025 All Rights Reserved
 [Name]=Apple Music
 [BasedOn]=https://music.apple.com/
@@ -527,6 +527,58 @@ Else
 EndIf
 SayRest
 
+json_foreach "tracks"
+	OutputTo "TRACKS"
+	json_select "name"
+	SayRest
+	Say "|"
+	OutputTo "TITLE"
+	json_select "name"
+	IfNotVar "originalTitles" "true"
+		RegexpReplace "\(.*\)" ""
+		RegexpReplace "\[.*\]" ""
+		If ""
+			Set "Skip_Comment" "True"
+			json_select "name"
+			SayRegexp "(?<=\()[^)]*(?=\))"
+		Else
+			SayRest
+		EndIf
+	Else
+		SayRest
+	EndIf
+	Say "|"
+
+	IfNotVar "originalTitles" "true"
+		OutputTo "COMMENT"
+		IfNotOutput "Skip_Comment"
+			json_select "name"
+			SayRegexp "(?<=\()[^)]*(?=\))"
+			IfOutput "COMMENT"
+				SayNewline
+			EndIf
+			SayRegexp "(?<=\[)[^)]*(?=\])"
+			Set "Skip_Comment"
+		EndIf
+		Say "|"
+	EndIf
+
+	IfVar "addSortTitles" "true"
+		OutputTo "TITLESORT"
+		json_select "name"
+		SayRest
+		Say "|"
+	EndIf
+
+	json_select_object "audio"
+    	OutputTo "TRACKYEAR"
+    	json_select "uploadDate"
+    	SayRest
+    	Say "|"
+	json_unselect_object
+
+json_foreach_end
+
 json "off"
 
 FindLine "<script type=\"application/json\" id=\"serialized-server-data\">" 1 1
@@ -555,7 +607,10 @@ json_select_object "data"
 		EndIf
 
 		IfOutput "ValidSection"
+		    Set "TEMP_LOCAL_ITEMCOUNT"
 			json_foreach "items"
+    			OutputTo "TEMP_LOCAL_ITEMCOUNT"
+    			SayRest
 				# Primary
 				json_select_object "contentDescriptor"
 					json_select "kind"
@@ -940,11 +995,6 @@ json_select_object "data"
 
 				IfOutput "SectionSong"
 
-					OutputTo "TRACKS"
-					json_select "title"
-					SayRest
-					Say "|"
-
 					OutputTo "TRACK"
 					json_select "trackNumber"
 					SayNextNumber
@@ -954,44 +1004,6 @@ json_select_object "data"
 					json_select "duration"
 					SayNextNumber
 					Say "|"
-
-					OutputTo "TITLE"
-					json_select "title"
-					IfNotVar "originalTitles" "true"
-						RegexpReplace "\(.*\)" ""
-						RegexpReplace "\[.*\]" ""
-						If ""
-							Set "Skip_Comment" "True"
-							json_select "title"
-							SayRegexp "(?<=\()[^)]*(?=\))"
-						Else
-							SayRest
-						EndIf
-					Else
-						SayRest
-					EndIf
-					Say "|"
-
-					IfNotVar "originalTitles" "true"
-						OutputTo "COMMENT"
-						IfNotOutput "Skip_Comment"
-							json_select "title"
-							SayRegexp "(?<=\()[^)]*(?=\))"
-							IfOutput "COMMENT"
-								SayNewline
-							EndIf
-							SayRegexp "(?<=\[)[^)]*(?=\])"
-							Set "Skip_Comment"
-						EndIf
-						Say "|"
-					EndIf
-
-					IfVar "addSortTitles" "true"
-						OutputTo "TITLESORT"
-						json_select "title"
-						SayRest
-						Say "|"
-					EndIf
 
 					OutputTo "COMPOSER"
 					json_select "composer"
@@ -1014,6 +1026,51 @@ json_select_object "data"
 					OutputTo "TOTALDISCS"
 					json_select "discNumber"
 					SayNextNumber
+
+					OutputTo "SHOWMOVEMENT"
+    				json_select "workName"
+    				IfNot ""
+    					Say "1"
+    				EndIf
+    				Say "|"
+
+    				OutputTo "WORK"
+    				json_select "workName"
+    				SayRest
+    				Say "|"
+
+    				OutputTo "MOVEMENTNAME"
+    				json_select "title"
+    				SayRest
+    				Say "|"
+
+    				OutputTo "MOVEMENT"
+    				# json_select "movementNumber"
+                    json_foreach_counter
+    				SayNextNumber
+    				Say "|"
+
+    				OutputTo "MOVEMENTTOTAL"
+    				# json_select "movementCount"
+    				# SayNextNumber
+                    SayOutput "TEMP_LOCAL_ITEMCOUNT"
+    				Say "|"
+
+    				IfNotVar "skipiTunesTags" "true"
+    					OutputTo "ITUNESADVISORY"
+    					json_select "showExplicitBadge"
+    					IfNot ""
+    						Replace "false" "0"
+    						Replace "true" "1"
+    						Replace "cleaned" "2"
+    						Replace "clean" "2"
+    						SayRest
+    					Else
+    						Say "0"
+    					EndIf
+    					Say "|"
+    				EndIf
+
 
 				EndIf
 
@@ -1321,6 +1378,7 @@ json_unselect_object
 # Cleanup
 Set "TEMP_ALBUMARTISTID"
 Set "Delimiter"
+Set "TEMP_LOCAL_ITEMCOUNT"
 
 IfOutput "NoDataFound"
 	Set "Output"
