@@ -1,4 +1,4 @@
-# Apple Music parser v3.18 for MP3Tag
+# Apple Music parser v3.19 for MP3Tag
 # © 2021-2025 All Rights Reserved
 [Name]=Apple Music
 [BasedOn]=https://music.apple.com/
@@ -607,6 +607,19 @@ json_select_object "data"
 		EndIf
 
 		IfOutput "ValidSection"
+		    Set "TEMP_DISCNAME"
+		    json_select_object "header"
+			IfNot ""
+			    json_select "kind"
+				    If "disc"
+              		    json_select_object "item"
+                            OutputTo "TEMP_DISCNAME"
+                            json_select "title"
+                            SayRest
+              		    json_unselect_object
+                    EndIf
+    		    json_unselect_object
+			EndIf
 		    Set "TEMP_LOCAL_ITEMCOUNT"
 			json_foreach "items"
     			OutputTo "TEMP_LOCAL_ITEMCOUNT"
@@ -1015,6 +1028,10 @@ json_select_object "data"
 					SayNextNumber
 					Say "|"
 
+					OutputTo "DISCNAME"
+					SayOutput "TEMP_DISCNAME"
+					Say "|"
+
 					IfVar "naturalTitles" "true"
 						OutputTo "ARTIST"
 						json_select "artistName"
@@ -1031,30 +1048,33 @@ json_select_object "data"
     				json_select "workName"
     				IfNot ""
     					Say "1"
+                        Say "|"
+        				OutputTo "WORK"
+        				json_select "workName"
+        				SayRest
+        				Say "|"
+        				OutputTo "MOVEMENTNAME"
+        				json_select "title"
+        				SayRest
+        				Say "|"
+        				OutputTo "MOVEMENT"
+                        json_foreach_counter
+        				SayRest
+        				Say "|"
+        				OutputTo "MOVEMENTTOTAL"
+                        SayOutput "TEMP_LOCAL_ITEMCOUNT"
+        				Say "|"
+                    Else
+                        Say "|"
+        				OutputTo "WORK"
+        				Say "|"
+        				OutputTo "MOVEMENTNAME"
+        				Say "|"
+        				OutputTo "MOVEMENT"
+        				Say "|"
+        				OutputTo "MOVEMENTTOTAL"
+        				Say "|"
     				EndIf
-    				Say "|"
-
-    				OutputTo "WORK"
-    				json_select "workName"
-    				SayRest
-    				Say "|"
-
-    				OutputTo "MOVEMENTNAME"
-    				json_select "title"
-    				SayRest
-    				Say "|"
-
-    				OutputTo "MOVEMENT"
-    				# json_select "movementNumber"
-                    json_foreach_counter
-    				SayNextNumber
-    				Say "|"
-
-    				OutputTo "MOVEMENTTOTAL"
-    				# json_select "movementCount"
-    				# SayNextNumber
-                    SayOutput "TEMP_LOCAL_ITEMCOUNT"
-    				Say "|"
 
     				IfNotVar "skipiTunesTags" "true"
     					OutputTo "ITUNESADVISORY"
@@ -1108,68 +1128,6 @@ IfNot ""
 				OutputTo "LANGUAGE"
 				json_select "audioLocale"
 				SayRest
-				Say "|"
-
-				OutputTo "GENRE"
-				IfVar "singleGenre" "true"
-					json_select_array "genreNames" 1 ""
-				Else
-					json_select_array "genreNames" -1 "\\\\"
-					Replace "\\\\Musica" ""
-					Replace "\\\\Music" ""
-					Replace "\\\\Musiikki" ""
-					Replace "\\\\Musikk" ""
-					Replace "\\\\Musik" ""
-					Replace "\\\\Musique" ""
-					Replace "\\\\Muzyka" ""
-					Replace "\\\\Müzik" ""
-					Replace "\\\\Música" ""
-					Replace "\\\\Музика" ""
-					Replace "\\\\ミュージック" ""
-					IfVar "delimiter" ", "
-						Replace "\\\\" ", "
-					EndIf
-					IfVar "delimiter" ";"
-						Replace "\\\\" ";"
-					EndIf
-					IfVar "delimiter" "/"
-						Replace "\\\\" "/"
-					EndIf
-					IfVar "delimiter" "|"
-						Replace "\\\\" "$verticalBar()"
-					EndIf
-					IfVar "delimiter" " "
-						Replace "\\\\" " "
-					EndIf
-				EndIf
-				SayRest
-				Say "|"
-
-				OutputTo "SHOWMOVEMENT"
-				json_select "workName"
-				IfNot ""
-					Say "1"
-				EndIf
-				Say "|"
-
-				OutputTo "WORK"
-				json_select "workName"
-				SayRest
-				Say "|"
-
-				OutputTo "MOVEMENTNAME"
-				json_select "movementName"
-				SayRest
-				Say "|"
-
-				OutputTo "MOVEMENT"
-				json_select "movementNumber"
-				SayNextNumber
-				Say "|"
-
-				OutputTo "MOVEMENTTOTAL"
-				json_select "movementCount"
-				SayNextNumber
 				Say "|"
 
 				IfNotVar "skipiTunesTags" "true"
@@ -1379,6 +1337,7 @@ json_unselect_object
 Set "TEMP_ALBUMARTISTID"
 Set "Delimiter"
 Set "TEMP_LOCAL_ITEMCOUNT"
+Set "TEMP_DISCNAME"
 
 IfOutput "NoDataFound"
 	Set "Output"
