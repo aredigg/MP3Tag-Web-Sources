@@ -1,4 +1,4 @@
-# Apple Music parser v3.19 for MP3Tag
+# Apple Music parser v3.20 for MP3Tag
 # © 2021-2025 All Rights Reserved
 [Name]=Apple Music
 [BasedOn]=https://music.apple.com/
@@ -481,7 +481,15 @@ IfNotOutput "Delimiter"
 	EndIf
 EndIf
 
-FindLine "<script id=schema:music-album type="application/ld+json\">" 1 1
+FindLine "<script id=schema:song type=\"application/ld+json\">" 1 1
+If ""
+    GotoLine 1
+    FindLine "<script id=schema:music-video type=\"application/ld+json\">" 1 1
+EndIf
+If ""
+    GotoLine 1
+    FindLine "<script id=schema:music-album type=\"application/ld+json\">" 1 1
+EndIf
 MoveLine 1 1
 
 json "on" "current"
